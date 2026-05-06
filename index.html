@@ -48,23 +48,23 @@ button,select,input{font-family:inherit;outline:none;}
 /* ── TITLE BAR ─────────────────────────────────── */
 #titlebar{
   height:var(--h-title);background:var(--ink);
-  display:flex;align-items:center;padding:0 14px;gap:12px;
+  display:flex;align-items:center;padding:0 20px;gap:12px;
   flex-shrink:0;border-bottom:1px solid rgba(200,134,10,0.3);
   z-index:50;position:relative;
 }
 .brand{
-  font-family:var(--font-display);font-size:13px;color:var(--gold);
+  font-family:var(--font-display);font-size:15px;color:var(--gold);
   letter-spacing:2px;display:flex;align-items:center;gap:6px;white-space:nowrap;
 }
 .brand-icon{font-size:16px;}
 .doc-title{
-  flex:1;text-align:center;font-size:11px;color:var(--silver);
+  flex:1;text-align:center;font-size:18px;color:var(--silver);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;
 }
 .tb-actions{display:flex;gap:6px;align-items:center;}
 .tb-btn{
   height:22px;padding:0 10px;border:1px solid var(--border2);border-radius:4px;
-  background:rgba(255,255,255,0.05);color:var(--silver);font-size:10px;cursor:pointer;
+  background:rgba(255,255,255,0.05);color:var(--silver);font-size:19px;cursor:pointer;
   transition:all var(--tr);letter-spacing:0.3px;
 }
 .tb-btn:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.2);}
@@ -618,7 +618,7 @@ button,select,input{font-family:inherit;outline:none;}
 <!-- ══ TITLE BAR ══ -->
 <div id="titlebar">
   <div class="brand"><span class="brand-icon">📖</span><span>S&amp;S BOOK</span></div>
-  <div class="doc-title" id="doctitle" title="Double-click to rename">Untitled Book</div>
+  <div class="doc-title" id="doctitle" title="Double-click to rename">S&S Book</div>
   <div class="tb-actions">
     <button class="tb-btn" onclick="autoSave()">💾 Save</button>
     <button class="tb-btn gold" onclick="openExport()">Export ↓</button>
