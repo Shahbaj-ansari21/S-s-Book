@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>S&S Book</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════════════
+   S&S BOOK — DESIGN SYSTEM
+══════════════════════════════════════════════════════════ */
+:root{
+  --ink:#0d1117;
+  --ink2:#1e2535;
+  --ink3:#2d3a4a;
+  --gold:#c8860a;
+  --gold2:#e8a820;
+  --gold-pale:rgba(200,134,10,0.12);
+  --silver:#8899aa;
+  --page:#fefcf7;
+  --page2:#faf6ef;
+  --canvas:#1a1f2e;
+  --canvas2:#141925;
+  --panel:#1e2535;
+  --panel2:#263040;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --r:6px;
+  --tr:0.16s ease;
+  --shadow-page:0 8px 48px rgba(0,0,0,0.45),0 2px 8px rgba(0,0,0,0.2);
+  --h-title:32px;
+  --h-ribbon:40px;
+  --h-tools:64px;
+  --h-status:24px;
+  --font-serif:'Cormorant Garamond',Georgia,serif;
+  --font-sans:'DM Sans',system-ui,sans-serif;
+  --font-display:'Cinzel',serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:var(--canvas);color:#e8eaf0;font-family:var(--font-sans);-webkit-tap-highlight-color:transparent;user-select:none;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:10px;}
+button,select,input{font-family:inherit;outline:none;}
+#editor{user-select:text;}
+
+/* ── TITLE BAR ─────────────────────────────────── */
+#titlebar{
+  height:var(--h-title);background:var(--ink);
+  display:flex;align-items:center;padding:0 14px;gap:12px;
+  flex-shrink:0;border-bottom:1px solid rgba(200,134,10,0.3);
+  z-index:50;position:relative;
+}
+.brand{
+  font-family:var(--font-display);font-size:13px;color:var(--gold);
+  letter-spacing:2px;display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.brand-icon{font-size:16px;}
+.doc-title{
+  flex:1;text-align:center;font-size:11px;color:var(--silver);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;
+}
+.tb-actions{display:flex;gap:6px;align-items:center;}
+.tb-btn{
+  height:22px;padding:0 10px;border:1px solid var(--border2);border-radius:4px;
+  background:rgba(255,255,255,0.05);color:var(--silver);font-size:10px;cursor:pointer;
+  transition:all var(--tr);letter-spacing:0.3px;
+}
+.tb-btn:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.2);}
+.tb-btn.gold{background:var(--gold);color:#fff;border-color:var(--gold);}
+.tb-btn.gold:hover{background:var(--gold2);}
+
+/* ── RIBBON TABS ────────────────────────────────── */
+#ribbon{
+  height:var(--h-ribbon);background:var(--ink2);
+  display:flex;align-items:stretch;padding:0 8px;gap:2px;
+  flex-shrink:0;border-bottom:2px solid var(--gold);
+  overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+#ribbon::-webkit-scrollbar{display:none;}
+.rtab{
+  display:flex;align-items:center;gap:5px;
+  padding:0 14px;font-size:11px;font-weight:500;color:var(--silver);
+  cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;
+  white-space:nowrap;transition:all var(--tr);letter-spacing:0.4px;flex-shrink:0;
+}
+.rtab .ticon{font-size:14px;}
+.rtab:hover{color:#fff;border-color:rgba(200,134,10,0.5);}
+.rtab.on{color:var(--gold);border-color:var(--gold);background:var(--gold-pale);}
+
+/* ── TOOL PANELS ────────────────────────────────── */
+#toolpanel{
+  background:var(--panel);min-height:var(--h-tools);
+  border-bottom:1px solid var(--border);flex-shrink:0;
+  overflow:hidden;
+}
+.tpanel{display:none;padding:6px 10px;gap:3px;flex-wrap:wrap;align-items:center;}
+.tpanel.on{display:flex;}
+
+.tgroup{
+  display:flex;flex-direction:column;gap:0;
+  padding:0 8px;border-right:1px solid var(--border);
+}
+.tgroup:last-child{border-right:none;}
+.tg-label{font-size:8px;color:#4a6070;text-align:center;text-transform:uppercase;letter-spacing:0.7px;margin-top:3px;padding-top:2px;border-top:1px solid var(--border);}
+.tg-row{display:flex;gap:2px;align-items:center;padding:2px 0;flex-wrap:wrap;}
+
+/* tool button */
+.tb{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:4px 7px;min-width:46px;min-height:48px;
+  border:none;border-radius:var(--r);background:transparent;
+  color:#a8bcc8;cursor:pointer;transition:all var(--tr);position:relative;
+}
+.tb:hover{background:var(--panel2);color:#fff;}
+.tb.on{background:rgba(200,134,10,0.2);color:var(--gold);}
+.tb .ti{font-size:17px;line-height:1;}
+.tb .tl{font-size:8.5px;text-align:center;line-height:1.2;max-width:50px;}
+.tb-sm{min-width:34px;min-height:34px;padding:3px 5px;}
+.tb-sm .ti{font-size:14px;}
+
+/* tooltip */
+.tb[data-tip]:hover::after{
+  content:attr(data-tip);position:absolute;bottom:calc(100%+6px);left:50%;
+  transform:translateX(-50%);background:#060a10;color:#c8d8e8;font-size:10px;
+  padding:4px 9px;border-radius:4px;white-space:nowrap;z-index:999;
+  border:1px solid var(--border2);pointer-events:none;
+}
+
+.back-btn{
+  display:flex;align-items:center;gap:4px;padding:4px 10px;
+  border:1px solid rgba(200,134,10,0.3);border-radius:var(--r);
+  background:var(--gold-pale);color:var(--gold);cursor:pointer;
+  font-size:10px;font-weight:600;transition:all var(--tr);white-space:nowrap;
+  min-height:36px;letter-spacing:0.3px;
+}
+.back-btn:hover{background:rgba(200,134,10,0.25);border-color:var(--gold);}
+
+.rsel{
+  background:rgba(255,255,255,0.07);border:1px solid var(--border2);
+  color:#c8d8e8;border-radius:4px;padding:3px 6px;
+  font-size:10px;cursor:pointer;height:26px;
+}
+.rsel:focus{border-color:var(--gold);}
+.rinp{
+  background:rgba(255,255,255,0.07);border:1px solid var(--border2);
+  color:#c8d8e8;border-radius:4px;padding:3px 5px;
+  font-size:10px;height:26px;width:46px;
+}
+.rinp:focus{border-color:var(--gold);}
+.color-pick{
+  width:26px;height:26px;padding:2px;border:1px solid var(--border2);
+  border-radius:4px;background:transparent;cursor:pointer;
+}
+
+/* divider in toolbar */
+.tdiv{width:1px;height:36px;background:var(--border);margin:0 4px;flex-shrink:0;}
+
+/* ── APP BODY ───────────────────────────────────── */
+#appbody{
+  display:flex;flex:1;overflow:hidden;
+  height:calc(100dvh - var(--h-title) - var(--h-ribbon) - var(--h-tools) - var(--h-status));
+}
+
+/* ── PAGE PANEL (left sidebar — page thumbnails) ── */
+#pagepanel{
+  width:160px;min-width:160px;
+  background:var(--canvas2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:width 0.22s ease,min-width 0.22s ease;
+}
+#pagepanel.closed{width:0;min-width:0;}
+.pp-header{
+  height:36px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 10px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.pp-title{font-size:10px;font-weight:600;color:var(--silver);text-transform:uppercase;letter-spacing:0.7px;}
+.pp-add{
+  width:22px;height:22px;border:none;border-radius:4px;
+  background:var(--gold);color:#fff;cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;font-weight:700;
+  transition:background var(--tr);
+}
+.pp-add:hover{background:var(--gold2);}
+.pp-scroll{flex:1;overflow-y:auto;padding:8px;}
+
+.page-thumb{
+  background:var(--page2);border:2px solid transparent;border-radius:4px;
+  margin-bottom:8px;cursor:pointer;aspect-ratio:8.5/11;
+  position:relative;overflow:hidden;
+  transition:all var(--tr);box-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+.page-thumb:hover{border-color:rgba(200,134,10,0.5);transform:scale(1.02);}
+.page-thumb.cur{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 4px 16px rgba(0,0,0,0.5);}
+.pt-num{
+  position:absolute;bottom:3px;right:5px;
+  font-size:8px;color:rgba(0,0,0,0.4);font-family:var(--font-mono);
+}
+.pt-del{
+  position:absolute;top:3px;right:3px;width:16px;height:16px;
+  background:rgba(192,57,43,0.8);color:#fff;border:none;border-radius:50%;
+  cursor:pointer;font-size:10px;display:none;align-items:center;justify-content:center;
+}
+.page-thumb:hover .pt-del{display:flex;}
+.pt-preview{
+  width:100%;height:100%;padding:4px;overflow:hidden;
+  font-size:4px;line-height:1.4;color:#333;pointer-events:none;
+}
+
+/* ── CANVAS AREA ─────────────────────────────────── */
+#canvas{
+  flex:1;overflow:auto;display:flex;flex-direction:column;align-items:center;
+  padding:28px 20px 48px;gap:28px;background:var(--canvas);
+  -webkit-overflow-scrolling:touch;
+}
+
+.page-wrap{
+  position:relative;display:flex;flex-direction:column;align-items:center;
+  width:100%;max-width:860px;
+}
+.page-lbl{
+  font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:6px;
+  letter-spacing:0.5px;display:flex;align-items:center;gap:8px;
+}
+.page-del-btn{
+  background:rgba(192,57,43,0.6);color:#fff;border:none;border-radius:3px;
+  padding:1px 6px;font-size:9px;cursor:pointer;transition:background var(--tr);
+}
+.page-del-btn:hover{background:#c0392b;}
+
+.doc-page{
+  background:var(--page);box-shadow:var(--shadow-page);
+  width:min(816px,100%);position:relative;overflow:hidden;
+  transition:box-shadow var(--tr),border var(--tr);
+  /* Default: book formatting margins */
+  padding:96px 80px 80px 100px;
+  min-height:200px;
+}
+.doc-page::before{/* page left edge shadow */
+  content:'';position:absolute;left:0;top:0;bottom:0;width:24px;
+  background:linear-gradient(to right,rgba(0,0,0,0.08),transparent);
+  pointer-events:none;
+}
+
+/* ── EDITOR ──────────────────────────────────────── */
+.page-editor{
+  width:100%;min-height:300px;outline:none;
+  font-family:var(--font-serif);font-size:clamp(13px,1.8vw,16px);
+  line-height:1.85;color:#1a1a1a;caret-color:var(--gold);
+  word-break:break-word;user-select:text;
+}
+.page-editor:empty::before{
+  content:attr(data-ph);color:#bbb;pointer-events:none;font-style:italic;
+}
+
+/* Book Typography Styles */
+.page-editor h1{font-family:var(--font-display);font-size:clamp(1.6em,4vw,2.2em);font-weight:600;text-align:center;letter-spacing:2px;margin:0.4em 0 0.6em;line-height:1.2;color:#0d0d0d;}
+.page-editor h2{font-family:var(--font-serif);font-size:clamp(1.3em,3vw,1.6em);font-weight:700;margin:1em 0 0.5em;border-bottom:1px solid rgba(200,134,10,0.3);padding-bottom:0.2em;color:#111;}
+.page-editor h3{font-family:var(--font-serif);font-size:1.2em;font-weight:600;font-style:italic;margin:0.8em 0 0.4em;color:#1a1a1a;}
+.page-editor h4{font-family:var(--font-sans);font-size:1em;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin:0.8em 0 0.3em;color:#333;}
+.page-editor p{margin-bottom:0.85em;text-align:justify;}
+.page-editor p+p{text-indent:1.5em;}
+.page-editor blockquote{
+  border-left:3px solid var(--gold);padding:10px 16px;margin:18px 0 18px 20px;
+  background:rgba(200,134,10,0.05);font-style:italic;color:#333;
+  font-size:1.05em;border-radius:0 4px 4px 0;
+}
+.page-editor blockquote cite{display:block;font-size:0.85em;margin-top:6px;color:#666;font-style:normal;}
+.page-editor table{border-collapse:collapse;width:100%;margin:16px 0;font-size:0.9em;}
+.page-editor th{background:#f0ece4;font-family:var(--font-sans);font-weight:600;font-size:0.85em;text-transform:uppercase;letter-spacing:0.5px;padding:8px 12px;border:1px solid #ddd;}
+.page-editor td{padding:8px 12px;border:1px solid #ddd;}
+.page-editor tr:nth-child(even) td{background:#f8f5f0;}
+.page-editor img{max-width:100%;border-radius:4px;display:block;margin:12px auto;}
+.page-editor ul{padding-left:22px;margin-bottom:0.8em;}
+.page-editor ol{padding-left:22px;margin-bottom:0.8em;}
+.page-editor li{margin-bottom:0.3em;}
+.page-editor code{font-family:var(--font-mono);background:#f0ece4;padding:1px 5px;border-radius:3px;font-size:0.85em;}
+.page-editor pre{background:#1a2030;color:#c8d8e8;padding:14px;border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:12px;margin:12px 0;}
+.page-editor .drop-cap::first-letter{
+  float:left;font-family:var(--font-display);font-size:3.4em;line-height:0.8;
+  margin:0.05em 0.08em 0 0;color:var(--gold);font-weight:600;
+}
+.page-editor .chapter-title{
+  font-family:var(--font-display);font-size:1.8em;text-align:center;
+  letter-spacing:3px;margin:0.5em 0 0.3em;
+}
+.page-editor .chapter-num{
+  font-family:var(--font-sans);font-size:0.75em;text-align:center;
+  letter-spacing:4px;text-transform:uppercase;color:var(--gold);
+  margin-bottom:0.2em;
+}
+.page-editor .scene-break{
+  text-align:center;color:#aaa;margin:20px 0;font-size:1.2em;letter-spacing:8px;
+}
+.page-editor .pull-quote{
+  font-family:var(--font-serif);font-size:1.35em;font-weight:300;font-style:italic;
+  text-align:center;color:#555;border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);
+  padding:14px 0;margin:20px 0;line-height:1.5;
+}
+.page-editor .footnote{font-size:0.78em;color:#777;border-top:1px solid #ddd;margin-top:20px;padding-top:8px;}
+.page-editor .epigraph{font-style:italic;color:#555;text-align:right;margin:20px 20px;font-size:0.95em;}
+.page-editor mark{background:#fff3a3;padding:1px 2px;border-radius:2px;}
+.page-editor del{color:#aaa;}
+.page-editor ins{text-decoration:underline;text-decoration-color:var(--gold);}
+.page-editor hr{border:none;text-align:center;color:#ccc;margin:20px 0;}
+.page-editor hr::after{content:'❧ ❧ ❧';}
+
+/* Page number footer */
+.page-footer{
+  position:absolute;bottom:24px;left:0;right:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-serif);font-size:12px;color:#aaa;
+  pointer-events:none;
+}
+
+/* ── STATUS BAR ──────────────────────────────────── */
+#statusbar{
+  height:var(--h-status);background:var(--ink);
+  display:flex;align-items:center;padding:0 14px;gap:16px;
+  flex-shrink:0;border-top:1px solid var(--border);
+  font-size:10px;color:var(--silver);
+}
+.stat{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.zoom-row{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.zbtn{
+  width:18px;height:18px;border:none;border-radius:3px;
+  background:rgba(255,255,255,0.07);color:var(--silver);cursor:pointer;font-size:13px;
+  display:flex;align-items:center;justify-content:center;transition:all var(--tr);
+}
+.zbtn:hover{background:var(--panel2);color:#fff;}
+#zoom-val{font-size:10px;min-width:36px;text-align:center;}
+
+/* ── FLOATING SELECTION TOOLBAR ──────────────────── */
+#floattb{
+  display:none;position:fixed;z-index:700;
+  background:var(--ink);border:1px solid var(--border2);border-radius:8px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.5);padding:4px 6px;
+  gap:2px;align-items:center;
+}
+#floattb.show{display:flex;}
+.ftb{
+  width:28px;height:28px;border:none;border-radius:4px;
+  background:transparent;color:#a8bcc8;cursor:pointer;font-size:13px;
+  display:flex;align-items:center;justify-content:center;transition:all var(--tr);
+}
+.ftb:hover{background:var(--panel2);color:#fff;}
+.ft-sep{width:1px;height:18px;background:var(--border);margin:0 2px;}
+
+/* ════════════════════════════════════════════════════
+   CAMERA / BATCH SCAN OVERLAY
+════════════════════════════════════════════════════ */
+#scanoverlay{
+  display:none;position:fixed;inset:0;z-index:800;
+  background:rgba(5,8,15,0.97);
+  flex-direction:column;align-items:center;
+  overflow-y:auto;padding:20px 16px 32px;gap:16px;
+}
+#scanoverlay.show{display:flex;}
+.scan-header{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:780px;}
+.scan-title{font-family:var(--font-display);font-size:18px;color:var(--gold);letter-spacing:2px;}
+.scan-close{width:32px;height:32px;border:1px solid var(--border2);border-radius:50%;background:rgba(255,255,255,0.05);color:#ccc;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all var(--tr);}
+.scan-close:hover{background:#c0392b;border-color:#c0392b;color:#fff;}
+
+/* live cam */
+.cam-frame{
+  position:relative;border-radius:10px;overflow:hidden;
+  width:min(580px,95vw);border:2px solid rgba(200,134,10,0.4);
+  box-shadow:0 8px 60px rgba(0,0,0,0.7);
+}
+#camvid{width:100%;aspect-ratio:4/3;background:#000;display:block;object-fit:cover;}
+.cam-guide{position:absolute;inset:0;pointer-events:none;}
+.cg-corner{position:absolute;width:22px;height:22px;border-color:var(--gold);border-style:solid;}
+.cg-corner.tl{top:10px;left:10px;border-width:3px 0 0 3px;border-radius:2px 0 0 0;}
+.cg-corner.tr{top:10px;right:10px;border-width:3px 3px 0 0;border-radius:0 2px 0 0;}
+.cg-corner.bl{bottom:10px;left:10px;border-width:0 0 3px 3px;border-radius:0 0 0 2px;}
+.cg-corner.br{bottom:10px;right:10px;border-width:0 3px 3px 0;border-radius:0 0 2px 0;}
+.scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(200,134,10,0.9),transparent);animation:sl 2.4s ease-in-out infinite;}
+@keyframes sl{0%,100%{top:8%;opacity:0;}8%{opacity:1;}92%{opacity:1;}50%{top:88%;}}
+#camcanvas{display:none;}
+
+/* cam perm box */
+#cam-perm{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border2);
+  border-radius:12px;padding:32px;text-align:center;max-width:400px;
+}
+.cp-icon{font-size:56px;margin-bottom:14px;}
+.cp-title{font-family:var(--font-display);font-size:16px;color:#ccd8e8;margin-bottom:8px;letter-spacing:1px;}
+.cp-text{font-size:12px;color:var(--silver);line-height:1.8;margin-bottom:20px;}
+
+/* cam controls */
+.cam-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.cbtn{
+  padding:10px 20px;border-radius:8px;border:none;
+  font-size:13px;font-family:inherit;font-weight:600;cursor:pointer;
+  transition:all var(--tr);letter-spacing:0.3px;
+}
+.cbtn.gold{background:var(--gold);color:#fff;}.cbtn.gold:hover{background:var(--gold2);}
+.cbtn.ghost{background:rgba(255,255,255,0.08);color:#ccd8e8;border:1px solid var(--border2);}
+.cbtn.ghost:hover{background:rgba(255,255,255,0.15);}
+.cbtn.red{background:rgba(192,57,43,0.85);color:#fff;}.cbtn.red:hover{background:#c0392b;}
+.cbtn.sm{padding:7px 14px;font-size:11px;}
+
+/* scanned pages grid */
+.scan-pages-label{
+  font-size:11px;color:var(--silver);display:flex;align-items:center;gap:10px;
+  width:100%;max-width:780px;
+}
+.sp-count{
+  background:var(--gold-pale);color:var(--gold);
+  padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;
+}
+#scan-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:12px;width:100%;max-width:780px;
+}
+.sg-item{
+  position:relative;background:#fff;border-radius:6px;overflow:hidden;
+  aspect-ratio:3/4;border:2px solid transparent;
+  box-shadow:0 4px 16px rgba(0,0,0,0.5);cursor:pointer;transition:all var(--tr);
+}
+.sg-item:hover{border-color:var(--gold);}
+.sg-item img{width:100%;height:100%;object-fit:cover;display:block;}
+.sg-del{
+  position:absolute;top:4px;right:4px;width:20px;height:20px;
+  background:rgba(192,57,43,0.9);color:#fff;border:none;border-radius:50%;
+  cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;
+}
+.sg-num{position:absolute;bottom:4px;left:5px;font-size:9px;color:#fff;background:rgba(0,0,0,0.5);padding:1px 5px;border-radius:3px;}
+.sg-check{
+  position:absolute;top:4px;left:4px;width:18px;height:18px;
+  border:2px solid rgba(255,255,255,0.7);border-radius:3px;background:rgba(0,0,0,0.3);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;
+}
+.sg-item.selected .sg-check{background:var(--gold);border-color:var(--gold);}
+
+.scan-footer{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+  width:100%;max-width:780px;border-top:1px solid var(--border);padding-top:16px;
+}
+
+/* cam status */
+#camstatus{
+  font-size:11px;text-align:center;padding:5px 16px;border-radius:16px;
+  background:rgba(255,255,255,0.04);
+}
+#camstatus.ok{color:#3fb950;}
+#camstatus.err{color:#f85149;}
+#camstatus.info{color:var(--gold);}
+
+/* ════════════════════════════════════════════════════
+   BOOK FORMAT SIDE PANEL
+════════════════════════════════════════════════════ */
+#fmtpanel{
+  width:260px;min-width:260px;background:var(--ink2);
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:width 0.22s ease,min-width 0.22s ease;
+}
+#fmtpanel.closed{width:0;min-width:0;}
+.fp-header{
+  height:36px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.fp-title{font-size:11px;font-weight:600;color:var(--gold);letter-spacing:1px;display:flex;align-items:center;gap:6px;}
+.fp-close{
+  width:22px;height:22px;border:none;border-radius:50%;
+  background:rgba(255,255,255,0.06);color:var(--silver);cursor:pointer;font-size:13px;
+  display:flex;align-items:center;justify-content:center;transition:all var(--tr);
+}
+.fp-close:hover{background:#c0392b;color:#fff;}
+.fp-scroll{flex:1;overflow-y:auto;padding:0;}
+
+.fp-section{border-bottom:1px solid var(--border);}
+.fp-sec-hd{
+  padding:10px 14px 8px;font-size:10px;font-weight:700;color:var(--silver);
+  text-transform:uppercase;letter-spacing:0.8px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  user-select:none;
+}
+.fp-sec-hd:hover{color:#fff;}
+.fp-sec-hd .arrow{transition:transform var(--tr);}
+.fp-sec-hd.open .arrow{transform:rotate(90deg);}
+.fp-sec-body{padding:6px 14px 12px;display:none;}
+.fp-sec-body.open{display:block;}
+.fp-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.fp-lbl{font-size:11px;color:#8899aa;flex:1;min-width:0;}
+.fp-ctrl{
+  padding:3px 7px;border:1px solid var(--border2);border-radius:4px;
+  font-size:11px;background:rgba(255,255,255,0.05);color:#ccd8e8;font-family:inherit;
+}
+.fp-ctrl:focus{outline:none;border-color:var(--gold);}
+.fp-color{width:28px;height:22px;border:1px solid var(--border2);border-radius:4px;padding:2px;background:transparent;cursor:pointer;}
+.fp-range{flex:1;accent-color:var(--gold);}
+
+.theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.theme-dot{
+  width:100%;aspect-ratio:1;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:all var(--tr);
+}
+.theme-dot:hover,.theme-dot.on{border-color:#fff;transform:scale(1.15);}
+
+.fmt-preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.fmt-preset{
+  padding:8px 6px;border-radius:6px;border:1px solid var(--border2);
+  background:rgba(255,255,255,0.03);cursor:pointer;text-align:center;
+  transition:all var(--tr);
+}
+.fmt-preset:hover,.fmt-preset.on{border-color:var(--gold);background:var(--gold-pale);}
+.fmt-preset .fpname{font-size:10px;color:#ccd8e8;font-weight:600;}
+.fmt-preset .fpdesc{font-size:8px;color:var(--silver);margin-top:2px;}
+
+.style-btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+.stb{
+  padding:6px 4px;border-radius:5px;border:1px solid var(--border2);
+  background:rgba(255,255,255,0.03);cursor:pointer;text-align:center;
+  transition:all var(--tr);color:#ccd8e8;font-size:10px;font-family:inherit;
+}
+.stb:hover{border-color:var(--gold);background:var(--gold-pale);color:var(--gold);}
+
+/* ════════════════════════════════════════════════════
+   MODALS
+════════════════════════════════════════════════════ */
+.modal-bg{
+  display:none;position:fixed;inset:0;z-index:900;
+  background:rgba(5,8,15,0.8);align-items:center;justify-content:center;padding:12px;
+}
+.modal-bg.show{display:flex;}
+.modal{
+  background:var(--ink2);border:1px solid var(--border2);border-radius:12px;
+  width:min(500px,100%);max-height:90dvh;overflow:hidden;
+  display:flex;flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,0.6);
+}
+.modal-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.modal-title{font-family:var(--font-display);font-size:15px;color:var(--gold);letter-spacing:1px;}
+.modal-x{width:28px;height:28px;border:none;border-radius:50%;background:rgba(255,255,255,0.06);color:#aaa;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.modal-x:hover{background:#c0392b;color:#fff;}
+.modal-body{padding:20px;overflow-y:auto;flex:1;}
+
+/* template grid */
+.tpl-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.tcat{padding:5px 12px;border-radius:16px;border:1px solid var(--border2);background:transparent;color:var(--silver);cursor:pointer;font-size:10px;font-family:inherit;transition:all var(--tr);}
+.tcat.on,.tcat:hover{background:var(--gold);color:#fff;border-color:var(--gold);}
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;}
+.tpl-card{border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;transition:all var(--tr);box-shadow:0 2px 10px rgba(0,0,0,0.3);}
+.tpl-card:hover{border-color:var(--gold);transform:translateY(-2px);}
+.tpl-prw-wrap{overflow:hidden;aspect-ratio:8.5/11;position:relative;}
+.tpl-prw{width:400%;height:400%;transform:scale(0.25);transform-origin:top left;pointer-events:none;}
+.tpl-info{padding:6px 8px;background:var(--ink3);}
+.tpl-nm{font-size:10px;font-weight:600;color:#c8d8e8;}
+.tpl-tp{font-size:8px;color:var(--silver);margin-top:1px;}
+
+/* export modal */
+.exp-lbl{font-size:10px;font-weight:700;color:var(--silver);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:6px;}
+.exp-inp{
+  width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;
+  font-size:13px;font-family:inherit;background:rgba(255,255,255,0.05);color:#e8eaf0;
+  transition:border-color var(--tr);
+}
+.exp-inp:focus{outline:none;border-color:var(--gold);}
+.fmt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.fmt-card{
+  padding:10px 6px;border-radius:8px;border:2px solid var(--border2);
+  background:rgba(255,255,255,0.03);cursor:pointer;text-align:center;transition:all var(--tr);
+}
+.fmt-card.on,.fmt-card:hover{border-color:var(--gold);background:var(--gold-pale);}
+.fmt-icon{font-size:20px;display:block;margin-bottom:3px;}
+.fmt-name{font-size:11px;font-weight:600;color:#c8d8e8;}
+.fmt-desc{font-size:9px;color:var(--silver);}
+.prog-bar{width:100%;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--gold);border-radius:2px;width:0%;transition:width 0.3s ease;}
+.exp-actions{display:flex;gap:8px;}
+.exp-btn{flex:1;padding:11px;border:none;border-radius:8px;font-size:13px;font-family:inherit;font-weight:600;cursor:pointer;transition:all var(--tr);}
+.exp-btn.primary{background:var(--gold);color:#fff;}.exp-btn.primary:hover{background:var(--gold2);}
+.exp-btn.cancel{background:rgba(255,255,255,0.06);color:var(--silver);}.exp-btn.cancel:hover{background:rgba(255,255,255,0.1);}
+
+/* ── TOAST ──────────────────────────────────────── */
+#toast{
+  position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(12px);
+  background:var(--ink);color:#e8eaf0;padding:8px 18px;border-radius:20px;
+  font-size:11px;opacity:0;pointer-events:none;z-index:9999;
+  transition:opacity 0.25s,transform 0.25s;
+  border-left:3px solid var(--gold);box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  max-width:90vw;text-align:center;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── MOBILE ──────────────────────────────────────── */
+@media(max-width:720px){
+  :root{--h-title:28px;--h-ribbon:36px;--h-tools:58px;--h-status:22px;}
+  #pagepanel{display:none!important;}
+  #fmtpanel{position:fixed;top:auto;bottom:0;left:0;right:0;width:100%!important;min-width:0!important;height:55dvh;border-left:none;border-top:2px solid var(--gold);}
+  .doc-page{padding:24px 16px;}
+  #canvas{padding:14px 8px 36px;}
+  .tb{min-width:38px;min-height:44px;}.tb .ti{font-size:15px;}.tb .tl{font-size:7.5px;}
+  .rtab{padding:0 9px;font-size:10px;}
+  .sg-item{} 
+}
+
+/* print */
+@media print{
+  body{background:#fff!important;}
+  #titlebar,#ribbon,#toolpanel,#statusbar,#pagepanel,#fmtpanel,
+  #floattb,#toast,#scanoverlay,.modal-bg,.page-del-btn,.page-lbl{display:none!important;}
+  #appbody,#canvas{height:auto!important;overflow:visible!important;display:block!important;background:#fff!important;padding:0!important;}
+  .doc-page{box-shadow:none!important;width:100%!important;margin-bottom:0!important;page-break-after:always;border:none!important;}
+  .page-wrap{max-width:100%!important;}
+  .page-footer{display:flex!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TITLE BAR ══ -->
+<div id="titlebar">
+  <div class="brand"><span class="brand-icon">📖</span><span>S&amp;S BOOK</span></div>
+  <div class="doc-title" id="doctitle" title="Double-click to rename">Untitled Book</div>
+  <div class="tb-actions">
+    <button class="tb-btn" onclick="autoSave()">💾 Save</button>
+    <button class="tb-btn gold" onclick="openExport()">Export ↓</button>
+  </div>
+</div>
+
+<!-- ══ RIBBON TABS ══ -->
+<div id="ribbon">
+  <div class="rtab on" data-tab="home"><span class="ticon">🏠</span>Home</div>
+  <div class="rtab" data-tab="insert"><span class="ticon">➕</span>Insert</div>
+  <div class="rtab" data-tab="format"><span class="ticon">📝</span>Book Format</div>
+  <div class="rtab" data-tab="layout"><span class="ticon">📐</span>Layout</div>
+  <div class="rtab" data-tab="scan"><span class="ticon">📷</span>Scan Pages</div>
+  <div class="rtab" data-tab="templates"><span class="ticon">🗂</span>Templates</div>
+  <div class="rtab" data-tab="view"><span class="ticon">👁</span>View</div>
+</div>
+
+<!-- ══ TOOL PANELS ══ -->
+<div id="toolpanel">
+
+  <!-- HOME -->
+  <div class="tpanel on" id="tp-home">
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="cmdAll('undo')" data-tip="Undo (Ctrl+Z)"><span class="ti">↩</span><span class="tl">Undo</span></button>
+        <button class="tb" onclick="cmdAll('redo')" data-tip="Redo (Ctrl+Y)"><span class="ti">↪</span><span class="tl">Redo</span></button>
+        <button class="tb" onclick="newDoc()" data-tip="New blank document"><span class="ti">📄</span><span class="tl">New</span></button>
+      </div>
+      <div class="tg-label">File</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <select class="rsel" id="ffamily" onchange="cmdAll('fontName',this.value)" style="width:130px" title="Font Family">
+          <option value="'Cormorant Garamond',Georgia,serif">Cormorant Garamond</option>
+          <option value="'Libre Baskerville',serif">Libre Baskerville</option>
+          <option value="Georgia,serif">Georgia</option>
+          <option value="'Times New Roman',serif">Times New Roman</option>
+          <option value="Garamond,serif">Garamond</option>
+          <option value="'Palatino Linotype',serif">Palatino</option>
+          <option value="'DM Sans',sans-serif">DM Sans</option>
+          <option value="Arial,sans-serif">Arial</option>
+          <option value="'JetBrains Mono',monospace">JetBrains Mono</option>
+        </select>
+        <input class="rinp" type="number" id="fsize" value="16" min="6" max="96" onchange="setFontSize(this.value)" title="Font size"/>
+        <input class="color-pick" type="color" value="#1a1a1a" onchange="cmdAll('foreColor',this.value)" title="Text color"/>
+      </div>
+      <div class="tg-row">
+        <button class="tb tb-sm" onclick="cmdAll('bold')" data-tip="Bold"><span class="ti"><b>B</b></span></button>
+        <button class="tb tb-sm" onclick="cmdAll('italic')" data-tip="Italic"><span class="ti"><i>I</i></span></button>
+        <button class="tb tb-sm" onclick="cmdAll('underline')" data-tip="Underline"><span class="ti"><u>U</u></span></button>
+        <button class="tb tb-sm" onclick="cmdAll('strikeThrough')" data-tip="Strikethrough"><span class="ti" style="text-decoration:line-through">S</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('hiliteColor','#fff3a3')" data-tip="Highlight text"><span class="ti">🖍</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('superscript')" data-tip="Superscript"><span class="ti">x²</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('subscript')" data-tip="Subscript"><span class="ti">x₂</span></button>
+      </div>
+      <div class="tg-label">Font</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb tb-sm" onclick="cmdAll('justifyLeft')" data-tip="Left align"><span class="ti">⬅</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('justifyCenter')" data-tip="Center"><span class="ti">☰</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('justifyRight')" data-tip="Right align"><span class="ti">➡</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('justifyFull')" data-tip="Justify (book style)"><span class="ti">▤</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('insertUnorderedList')" data-tip="Bullet list"><span class="ti">•≡</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('insertOrderedList')" data-tip="Numbered list"><span class="ti">1≡</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('indent')" data-tip="Indent"><span class="ti">→|</span></button>
+        <button class="tb tb-sm" onclick="cmdAll('outdent')" data-tip="Outdent"><span class="ti">|←</span></button>
+      </div>
+      <div class="tg-label">Paragraph</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="insH(1)" data-tip="Chapter Title (H1)"><span class="ti" style="font-family:var(--font-display);font-size:13px">H1</span><span class="tl">Chapter</span></button>
+        <button class="tb" onclick="insH(2)" data-tip="Section heading (H2)"><span class="ti">H2</span><span class="tl">Section</span></button>
+        <button class="tb" onclick="insH(3)" data-tip="Sub-heading (H3)"><span class="ti">H3</span><span class="tl">Sub</span></button>
+        <button class="tb" onclick="insH(4)" data-tip="Micro-heading (H4)"><span class="ti">H4</span><span class="tl">Micro</span></button>
+        <button class="tb" onclick="cmdAll('formatBlock','p')" data-tip="Normal body paragraph"><span class="ti">¶</span><span class="tl">Normal</span></button>
+      </div>
+      <div class="tg-label">Headings</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="cmdAll('removeFormat')" data-tip="Remove all formatting"><span class="ti">✕</span><span class="tl">Clear</span></button>
+        <button class="tb" onclick="openFmtPanel()" data-tip="Open book formatting panel"><span class="ti">🎨</span><span class="tl">Format</span></button>
+      </div>
+      <div class="tg-label">Style</div>
+    </div>
+  </div>
+
+  <!-- INSERT -->
+  <div class="tpanel" id="tp-insert">
+    <div class="tgroup"><div class="tg-row"><button class="back-btn" onclick="goTab('home')">← Home</button></div><div class="tg-label">Back</div></div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="insTable()" data-tip="Insert table — choose rows & columns"><span class="ti">⊞</span><span class="tl">Table</span></button>
+        <button class="tb" onclick="insImage()" data-tip="Insert image from device"><span class="ti">🖼</span><span class="tl">Image</span></button>
+        <button class="tb" onclick="insLink()" data-tip="Insert hyperlink"><span class="ti">🔗</span><span class="tl">Link</span></button>
+        <button class="tb" onclick="insHR()" data-tip="Insert scene break / divider"><span class="ti">✦</span><span class="tl">Break</span></button>
+      </div>
+      <div class="tg-label">Content</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="addPage()" data-tip="Add a new blank page after current"><span class="ti">📄+</span><span class="tl">New Page</span></button>
+        <button class="tb" onclick="insTOC()" data-tip="Auto-generate table of contents from headings"><span class="ti">📑</span><span class="tl">Contents</span></button>
+        <button class="tb" onclick="insFootnote()" data-tip="Insert a footnote reference"><span class="ti">†</span><span class="tl">Footnote</span></button>
+        <button class="tb" onclick="insPageNum()" data-tip="Toggle page number footer"><span class="ti">#</span><span class="tl">Page No</span></button>
+      </div>
+      <div class="tg-label">Structure</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="insDate()" data-tip="Insert today's date"><span class="ti">📅</span><span class="tl">Date</span></button>
+        <button class="tb" onclick="insSig()" data-tip="Insert signature line"><span class="ti">✍</span><span class="tl">Sign</span></button>
+        <button class="tb" onclick="insQuote()" data-tip="Insert blockquote"><span class="ti">❝</span><span class="tl">Quote</span></button>
+        <button class="tb" onclick="insCode()" data-tip="Insert code block"><span class="ti">&lt;/&gt;</span><span class="tl">Code</span></button>
+      </div>
+      <div class="tg-label">Elements</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="insEpigraph()" data-tip="Insert epigraph (opening quote for chapter)"><span class="ti">『</span><span class="tl">Epigraph</span></button>
+        <button class="tb" onclick="insPullQuote()" data-tip="Insert pull quote (magazine style)"><span class="ti">❞</span><span class="tl">Pull Quote</span></button>
+        <button class="tb" onclick="insWatermark()" data-tip="Add watermark to page"><span class="ti">💧</span><span class="tl">Watermark</span></button>
+      </div>
+      <div class="tg-label">Book Elements</div>
+    </div>
+  </div>
+
+  <!-- BOOK FORMAT -->
+  <div class="tpanel" id="tp-format">
+    <div class="tgroup"><div class="tg-row"><button class="back-btn" onclick="goTab('home')">← Home</button></div><div class="tg-label">Back</div></div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="applyBookStyle('novel')" data-tip="Novel style — serif, justified, drop caps"><span class="ti">📚</span><span class="tl">Novel</span></button>
+        <button class="tb" onclick="applyBookStyle('academic')" data-tip="Academic — double spaced, Times New Roman"><span class="ti">🎓</span><span class="tl">Academic</span></button>
+        <button class="tb" onclick="applyBookStyle('poetry')" data-tip="Poetry — centered, elegant spacing"><span class="ti">🌸</span><span class="tl">Poetry</span></button>
+        <button class="tb" onclick="applyBookStyle('textbook')" data-tip="Textbook — structured, clean sans-serif"><span class="ti">📖</span><span class="tl">Textbook</span></button>
+        <button class="tb" onclick="applyBookStyle('magazine')" data-tip="Magazine — columns, modern layout"><span class="ti">📰</span><span class="tl">Magazine</span></button>
+        <button class="tb" onclick="applyBookStyle('screenplay')" data-tip="Screenplay format — Courier, specific margins"><span class="ti">🎬</span><span class="tl">Screenplay</span></button>
+      </div>
+      <div class="tg-label">Book Style Presets</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="insDropCap()" data-tip="Add drop cap to current paragraph"><span class="ti">𝔻</span><span class="tl">Drop Cap</span></button>
+        <button class="tb" onclick="insChapter()" data-tip="Insert formatted chapter heading"><span class="ti">Ⅰ</span><span class="tl">Chapter</span></button>
+        <button class="tb" onclick="insSceneBreak()" data-tip="Insert scene break (✦ ✦ ✦)"><span class="ti">✦✦✦</span><span class="tl">Scene Break</span></button>
+        <button class="tb" onclick="insPullQuote()" data-tip="Pull quote (large italic)"><span class="ti">❞</span><span class="tl">Pull Quote</span></button>
+      </div>
+      <div class="tg-label">Book Elements</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="setIndent('first')" data-tip="First-line indent only (book style)"><span class="ti">→¶</span><span class="tl">1st Indent</span></button>
+        <button class="tb" onclick="setIndent('hanging')" data-tip="Hanging indent (bibliography)"><span class="ti">¶←</span><span class="tl">Hanging</span></button>
+        <button class="tb" onclick="setIndent('block')" data-tip="Block indent (full paragraph)"><span class="ti">▸¶</span><span class="tl">Block</span></button>
+      </div>
+      <div class="tg-label">Indent Style</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="openFmtPanel()" data-tip="Open formatting side panel"><span class="ti">🎛</span><span class="tl">Full Panel</span></button>
+      </div>
+      <div class="tg-label">Panel</div>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="tpanel" id="tp-layout">
+    <div class="tgroup"><div class="tg-row"><button class="back-btn" onclick="goTab('home')">← Home</button></div><div class="tg-label">Back</div></div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="setSize('letter')" data-tip="US Letter — 8.5×11 in"><span class="ti">📄</span><span class="tl">Letter</span></button>
+        <button class="tb" onclick="setSize('a4')" data-tip="A4 — 210×297 mm"><span class="ti">📋</span><span class="tl">A4</span></button>
+        <button class="tb" onclick="setSize('a5')" data-tip="A5 — pocket book size"><span class="ti">📔</span><span class="tl">A5 Book</span></button>
+        <button class="tb" onclick="setSize('legal')" data-tip="Legal — 8.5×14 in"><span class="ti">📃</span><span class="tl">Legal</span></button>
+        <button class="tb" onclick="toggleOrientation()" data-tip="Toggle portrait/landscape"><span class="ti">↔</span><span class="tl">Rotate</span></button>
+      </div>
+      <div class="tg-label">Page Size</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="setMargin('book')" data-tip="Book margins — larger gutter on left"><span class="ti">📚</span><span class="tl">Book</span></button>
+        <button class="tb" onclick="setMargin('normal')" data-tip="Normal — 1 inch all sides"><span class="ti">⊡</span><span class="tl">Normal</span></button>
+        <button class="tb" onclick="setMargin('narrow')" data-tip="Narrow — 0.5 inch"><span class="ti">⊞</span><span class="tl">Narrow</span></button>
+        <button class="tb" onclick="setMargin('wide')" data-tip="Wide — 1.5 inch"><span class="ti">⊟</span><span class="tl">Wide</span></button>
+        <button class="tb" onclick="setMargin('mirror')" data-tip="Mirror margins (print book binding)"><span class="ti">⇔</span><span class="tl">Mirror</span></button>
+      </div>
+      <div class="tg-label">Margins</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="setCols(1)" data-tip="Single column"><span class="ti">▌</span><span class="tl">1 Col</span></button>
+        <button class="tb" onclick="setCols(2)" data-tip="Two columns"><span class="ti">▌▌</span><span class="tl">2 Col</span></button>
+        <button class="tb" onclick="setCols(3)" data-tip="Three columns"><span class="ti">▌▌▌</span><span class="tl">3 Col</span></button>
+        <button class="tb" onclick="setSpacing('single')" data-tip="Single line spacing"><span class="ti">↕</span><span class="tl">1×</span></button>
+        <button class="tb" onclick="setSpacing('1.5')" data-tip="1.5 line spacing"><span class="ti">↕↕</span><span class="tl">1.5×</span></button>
+        <button class="tb" onclick="setSpacing('double')" data-tip="Double spacing (academic)"><span class="ti">↕↕↕</span><span class="tl">2×</span></button>
+      </div>
+      <div class="tg-label">Columns &amp; Spacing</div>
+    </div>
+  </div>
+
+  <!-- SCAN -->
+  <div class="tpanel" id="tp-scan">
+    <div class="tgroup"><div class="tg-row"><button class="back-btn" onclick="goTab('home')">← Home</button></div><div class="tg-label">Back</div></div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="openScan()" data-tip="Open camera scanner for physical pages"><span class="ti">📷</span><span class="tl">Open Scanner</span></button>
+        <button class="tb" onclick="flipCam()" data-tip="Switch front/back camera"><span class="ti">🔄</span><span class="tl">Flip Camera</span></button>
+      </div>
+      <div class="tg-row" style="font-size:9px;color:var(--silver);padding:2px;max-width:220px;line-height:1.5;">
+        📌 Scan multiple pages — All will be added to the document at once
+      </div>
+      <div class="tg-label">Batch Scan</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="insImage()" data-tip="Insert image from gallery"><span class="ti">🖼</span><span class="tl">From Gallery</span></button>
+      </div>
+      <div class="tg-label">Import</div>
+    </div>
+  </div>
+
+  <!-- TEMPLATES -->
+  <div class="tpanel" id="tp-templates">
+    <div class="tgroup"><div class="tg-row"><button class="back-btn" onclick="goTab('home')">← Home</button></div><div class="tg-label">Back</div></div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="openTpl('all')" data-tip="Browse all templates"><span class="ti">🗂</span><span class="tl">All</span></button>
+        <button class="tb" onclick="openTpl('books')" data-tip="Book cover templates"><span class="ti">📚</span><span class="tl">Books</span></button>
+        <button class="tb" onclick="openTpl('certs')" data-tip="Certificate templates"><span class="ti">🏆</span><span class="tl">Certs</span></button>
+        <button class="tb" onclick="openTpl('ebooks')" data-tip="E-book templates"><span class="ti">📱</span><span class="tl">E-Books</span></button>
+        <button class="tb" onclick="openTpl('reports')" data-tip="Report templates"><span class="ti">📊</span><span class="tl">Reports</span></button>
+      </div>
+      <div class="tg-label">Template Library</div>
+    </div>
+  </div>
+
+  <!-- VIEW -->
+  <div class="tpanel" id="tp-view">
+    <div class="tgroup"><div class="tg-row"><button class="back-btn" onclick="goTab('home')">← Home</button></div><div class="tg-label">Back</div></div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="togglePages()" data-tip="Show/hide page navigator"><span class="ti">◀▶</span><span class="tl">Pages</span></button>
+        <button class="tb" onclick="openFmtPanel()" data-tip="Show/hide format panel"><span class="ti">🎨</span><span class="tl">Format</span></button>
+        <button class="tb" onclick="toggleFS()" data-tip="Fullscreen mode"><span class="ti">⛶</span><span class="tl">Fullscreen</span></button>
+        <button class="tb" onclick="toggleFocus()" data-tip="Distraction-free writing mode"><span class="ti">🎯</span><span class="tl">Focus</span></button>
+      </div>
+      <div class="tg-label">Panels</div>
+    </div>
+    <div class="tgroup">
+      <div class="tg-row">
+        <button class="tb" onclick="setZoom(75)"><span class="ti">75%</span><span class="tl">Compact</span></button>
+        <button class="tb" onclick="setZoom(100)"><span class="ti">100%</span><span class="tl">Normal</span></button>
+        <button class="tb" onclick="setZoom(120)"><span class="ti">120%</span><span class="tl">Large</span></button>
+        <button class="tb" onclick="setZoom(150)"><span class="ti">150%</span><span class="tl">Bigger</span></button>
+      </div>
+      <div class="tg-label">Zoom</div>
+    </div>
+  </div>
+
+</div><!-- /toolpanel -->
+
+<!-- ══ APP BODY ══ -->
+<div id="appbody">
+
+  <!-- PAGE PANEL -->
+  <div id="pagepanel">
+    <div class="pp-header">
+      <span class="pp-title">Pages</span>
+      <button class="pp-add" onclick="addPage()" title="Add new page">+</button>
+    </div>
+    <div class="pp-scroll" id="thumbscroll"></div>
+  </div>
+
+  <!-- CANVAS -->
+  <div id="canvas"></div>
+
+  <!-- FORMAT PANEL -->
+  <div id="fmtpanel" class="closed">
+    <div class="fp-header">
+      <div class="fp-title">🎨 Book Formatting</div>
+      <button class="fp-close" onclick="closeFmtPanel()">✕</button>
+    </div>
+    <div class="fp-scroll">
+
+      <!-- Book Style Presets -->
+      <div class="fp-section">
+        <div class="fp-sec-hd open" onclick="toggleSec(this)"><span>📚 Book Style Presets</span><span class="arrow">▶</span></div>
+        <div class="fp-sec-body open">
+          <div class="fmt-preset-grid">
+            <div class="fmt-preset" onclick="applyBookStyle('novel')"><div class="fpname">📚 Novel</div><div class="fpdesc">Serif, justified</div></div>
+            <div class="fmt-preset" onclick="applyBookStyle('academic')"><div class="fpname">🎓 Academic</div><div class="fpdesc">Double space</div></div>
+            <div class="fmt-preset" onclick="applyBookStyle('poetry')"><div class="fpname">🌸 Poetry</div><div class="fpdesc">Centered, airy</div></div>
+            <div class="fmt-preset" onclick="applyBookStyle('textbook')"><div class="fpname">📖 Textbook</div><div class="fpdesc">Clean, structured</div></div>
+            <div class="fmt-preset" onclick="applyBookStyle('magazine')"><div class="fpname">📰 Magazine</div><div class="fpdesc">Columns, modern</div></div>
+            <div class="fmt-preset" onclick="applyBookStyle('screenplay')"><div class="fpname">🎬 Screenplay</div><div class="fpdesc">Courier, strict</div></div>
+            <div class="fmt-preset" onclick="applyBookStyle('children')"><div class="fpname">🧸 Children</div><div class="fpdesc">Large, playful</div></div>
+            <div class="fmt-preset" onclick="applyBookStyle('legal')"><div class="fpname">⚖️ Legal</div><div class="fpdesc">Formal, numbered</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typography -->
+      <div class="fp-section">
+        <div class="fp-sec-hd open" onclick="toggleSec(this)"><span>✍ Typography</span><span class="arrow">▶</span></div>
+        <div class="fp-sec-body open">
+          <div class="fp-row"><span class="fp-lbl">Font Family</span>
+            <select class="fp-ctrl" onchange="getEd().style.fontFamily=this.value" style="width:120px">
+              <option value="'Cormorant Garamond',serif">Cormorant Garamond</option>
+              <option value="'Libre Baskerville',serif">Libre Baskerville</option>
+              <option value="Georgia,serif">Georgia</option>
+              <option value="'Times New Roman',serif">Times New Roman</option>
+              <option value="'DM Sans',sans-serif">DM Sans</option>
+              <option value="'Courier New',monospace">Courier New</option>
+            </select>
+          </div>
+          <div class="fp-row"><span class="fp-lbl">Font Size</span><input class="fp-ctrl" type="number" value="16" min="6" max="72" style="width:60px" onchange="getEd().style.fontSize=this.value+'px'"/></div>
+          <div class="fp-row"><span class="fp-lbl">Line Height</span><input class="fp-ctrl fp-range" type="range" min="1" max="3" step="0.1" value="1.85" oninput="getEd().style.lineHeight=this.value;this.nextSibling.textContent=parseFloat(this.value).toFixed(1)"/><span style="font-size:10px;color:var(--silver);width:24px">1.9</span></div>
+          <div class="fp-row"><span class="fp-lbl">Letter Spacing</span><input class="fp-ctrl" type="number" value="0" step="0.5" style="width:60px" onchange="getEd().style.letterSpacing=this.value+'px'"/></div>
+          <div class="fp-row"><span class="fp-lbl">Word Spacing</span><input class="fp-ctrl" type="number" value="0" step="1" style="width:60px" onchange="getEd().style.wordSpacing=this.value+'px'"/></div>
+          <div class="fp-row"><span class="fp-lbl">Text Align</span>
+            <select class="fp-ctrl" onchange="getEd().style.textAlign=this.value">
+              <option value="justify">Justify</option>
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Colors -->
+      <div class="fp-section">
+        <div class="fp-sec-hd" onclick="toggleSec(this)"><span>🎨 Colors</span><span class="arrow">▶</span></div>
+        <div class="fp-sec-body">
+          <div class="fp-row"><span class="fp-lbl">Page Color</span><input class="fp-color" type="color" value="#fefcf7" onchange="curPage().style.background=this.value"/></div>
+          <div class="fp-row"><span class="fp-lbl">Text Color</span><input class="fp-color" type="color" value="#1a1a1a" onchange="getEd().style.color=this.value"/></div>
+          <div class="fp-row"><span class="fp-lbl">Accent Color</span><input class="fp-color" type="color" value="#c8860a" onchange="document.documentElement.style.setProperty('--gold',this.value)"/></div>
+          <div style="margin-top:8px;margin-bottom:4px;font-size:9px;color:var(--silver);">QUICK THEMES</div>
+          <div class="theme-grid">
+            <div class="theme-dot" style="background:#1a0a05" title="Brown" onclick="applyPgTheme('#1a0a05','#f0e0c0')"></div>
+            <div class="theme-dot" style="background:#0a1628" title="Navy" onclick="applyPgTheme('#0a1628','#c8d8e8')"></div>
+            <div class="theme-dot" style="background:#fefcf7" title="White" onclick="applyPgTheme('#fefcf7','#1a1a1a')"></div>
+            <div class="theme-dot" style="background:#f5f0e0" title="Cream" onclick="applyPgTheme('#f5f0e0','#3a2010')"></div>
+            <div class="theme-dot" style="background:#1a2030" title="Dark" onclick="applyPgTheme('#1a2030','#c8d8e8')"></div>
+            <div class="theme-dot" style="background:#2a0a1a" title="Wine" onclick="applyPgTheme('#2a0a1a','#f0c0d0')"></div>
+            <div class="theme-dot" style="background:#0a2010" title="Forest" onclick="applyPgTheme('#0a2010','#d0e8c0')"></div>
+            <div class="theme-dot" style="background:#fff8e8" title="Aged" onclick="applyPgTheme('#fff8e8','#3a2510')"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page Setup -->
+      <div class="fp-section">
+        <div class="fp-sec-hd" onclick="toggleSec(this)"><span>📐 Page Setup</span><span class="arrow">▶</span></div>
+        <div class="fp-sec-body">
+          <div class="fp-row"><span class="fp-lbl">Top Margin</span><input class="fp-ctrl" type="number" value="96" min="0" max="200" style="width:60px" onchange="setCustomMarginSide('top',this.value)"/></div>
+          <div class="fp-row"><span class="fp-lbl">Bottom Margin</span><input class="fp-ctrl" type="number" value="80" min="0" max="200" style="width:60px" onchange="setCustomMarginSide('bottom',this.value)"/></div>
+          <div class="fp-row"><span class="fp-lbl">Left (Gutter)</span><input class="fp-ctrl" type="number" value="100" min="0" max="200" style="width:60px" onchange="setCustomMarginSide('left',this.value)"/></div>
+          <div class="fp-row"><span class="fp-lbl">Right Margin</span><input class="fp-ctrl" type="number" value="80" min="0" max="200" style="width:60px" onchange="setCustomMarginSide('right',this.value)"/></div>
+          <div class="fp-row"><span class="fp-lbl">Border</span>
+            <select class="fp-ctrl" onchange="curPage().style.border=this.value">
+              <option value="">None</option>
+              <option value="1px solid #ddd">Thin</option>
+              <option value="3px double #c8860a">Gold Double</option>
+              <option value="6px groove #1a2a4a">Navy</option>
+              <option value="4px dashed #aaa">Dashed</option>
+              <option value="3px solid #333">Solid</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decorations -->
+      <div class="fp-section">
+        <div class="fp-sec-hd" onclick="toggleSec(this)"><span>✨ Decorations</span><span class="arrow">▶</span></div>
+        <div class="fp-sec-body">
+          <div class="style-btn-grid">
+            <button class="stb" onclick="insWatermark()">💧 Watermark</button>
+            <button class="stb" onclick="insPageNum()">📄 Page No</button>
+            <button class="stb" onclick="insDropCap()">𝔻 Drop Cap</button>
+            <button class="stb" onclick="insSceneBreak()">✦✦✦ Scene</button>
+            <button class="stb" onclick="insChapter()">Ⅰ Chapter</button>
+            <button class="stb" onclick="insEpigraph()">『 Epigraph</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shadow -->
+      <div class="fp-section">
+        <div class="fp-sec-hd" onclick="toggleSec(this)"><span>🌑 Shadow</span><span class="arrow">▶</span></div>
+        <div class="fp-sec-body">
+          <div class="fp-row"><span class="fp-lbl">Intensity</span>
+            <input class="fp-range" type="range" min="0" max="5" value="3" style="flex:1" oninput="setShadow(this.value)"/>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /appbody -->
+
+<!-- ══ STATUS BAR ══ -->
+<div id="statusbar">
+  <span class="stat">📝 <span id="wc">0</span> words</span>
+  <span class="stat">📄 <span id="pgcount">1</span> pages</span>
+  <span class="stat" id="savestat">💾 Not saved</span>
+  <div class="zoom-row">
+    <button class="zbtn" onclick="adjZoom(-10)">−</button>
+    <span id="zoom-val">100%</span>
+    <button class="zbtn" onclick="adjZoom(10)">+</button>
+  </div>
+</div>
+
+<!-- ══ FLOATING TOOLBAR ══ -->
+<div id="floattb">
+  <button class="ftb" onclick="cmdAll('bold')" title="Bold"><b>B</b></button>
+  <button class="ftb" onclick="cmdAll('italic')" title="Italic"><i>I</i></button>
+  <button class="ftb" onclick="cmdAll('underline')" title="Underline"><u>U</u></button>
+  <button class="ftb" onclick="cmdAll('hiliteColor','#fff3a3')" title="Highlight">🖍</button>
+  <div class="ft-sep"></div>
+  <button class="ftb" onclick="insLink()" title="Link">🔗</button>
+  <button class="ftb" onclick="cmdAll('removeFormat')" title="Clear">✕</button>
+</div>
+
+<!-- ══ SCAN OVERLAY ══ -->
+<div id="scanoverlay">
+  <div class="scan-header">
+    <div class="scan-title">📷 BATCH PAGE SCANNER</div>
+    <button class="scan-close" onclick="closeScan()">✕</button>
+  </div>
+
+  <div id="camstatus" class="info">Press start to get the camera ready</div>
+
+  <!-- perm box -->
+  <div id="cam-perm">
+    <div class="cp-icon">📷</div>
+    <div class="cp-title">CAMERA SCAN</div>
+    <div class="cp-text">
+      Scanning physical book pages<br>
+      import into document .<br><br>
+      ✅ All at once <strong>multiple pages</strong> capture...<br>
+      ✅ All pages will be added to the document at once<br>
+      ✅ A new page will be automatically created for each page 
+    </div>
+    <div class="cam-btns">
+      <button class="cbtn gold" onclick="startCam()">📷 Start camera</button>
+    </div>
+  </div>
+
+  <!-- live cam (hidden until started) -->
+  <div id="cam-live" style="display:none;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:780px;">
+    <div class="cam-frame">
+      <video id="camvid" autoplay playsinline muted></video>
+      <div class="cam-guide">
+        <div class="cg-corner tl"></div><div class="cg-corner tr"></div>
+        <div class="cg-corner bl"></div><div class="cg-corner br"></div>
+      </div>
+      <div class="scanline"></div>
+    </div>
+    <canvas id="camcanvas" style="display:none;"></canvas>
+    <div class="cam-btns">
+      <button class="cbtn gold" onclick="snapPage()">📸 Page Capture</button>
+      <button class="cbtn ghost" onclick="flipCam()">🔄 Flip</button>
+      <button class="cbtn ghost sm" onclick="closeScan()">Wapis Jao</button>
+    </div>
+    <div style="font-size:11px;color:var(--silver);">Place the page in the frame and press capture — click as many pages as you want</div>
+  </div>
+
+  <!-- scanned pages -->
+  <div class="scan-pages-label">
+    Scanned Pages: <span class="sp-count" id="scancount">0</span>
+    <span style="font-size:10px;color:var(--silver);">(click to select/deselect)</span>
+  </div>
+  <div id="scan-grid"></div>
+
+  <div class="scan-footer" id="scan-footer" style="display:none;">
+    <button class="cbtn gold" onclick="importScanned()">✅ Add to document (<span id="selcount">0</span> pages)</button>
+    <button class="cbtn ghost" onclick="clearScanned()">🗑 Delet everything</button>
+    <button class="cbtn ghost sm" onclick="closeScan()">Cancel</button>
+  </div>
+</div>
+
+<!-- ══ TEMPLATE MODAL ══ -->
+<div class="modal-bg" id="tpl-modal">
+  <div class="modal" style="width:min(820px,96vw);">
+    <div class="modal-hd">
+      <div class="modal-title">📚 TEMPLATE LIBRARY</div>
+      <button class="modal-x" onclick="closeTpl()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tpl-cats" id="tplcats">
+        <button class="tcat on" onclick="filterTpl('all',this)">All</button>
+        <button class="tcat" onclick="filterTpl('books',this)">📚 Books</button>
+        <button class="tcat" onclick="filterTpl('certs',this)">🏆 Certs</button>
+        <button class="tcat" onclick="filterTpl('ebooks',this)">📱 E-Books</button>
+        <button class="tcat" onclick="filterTpl('reports',this)">📊 Reports</button>
+      </div>
+      <div class="tpl-grid" id="tplgrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EXPORT MODAL ══ -->
+<div class="modal-bg" id="exp-modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">💾 EXPORT DOCUMENT</div>
+      <button class="modal-x" onclick="closeExp()">✕</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <div class="exp-lbl">File Name</div>
+        <input class="exp-inp" id="expname" value="S&S-Book" placeholder="File ka naam…"/>
+      </div>
+      <div>
+        <div class="exp-lbl">Format</div>
+        <div class="fmt-grid">
+          <div class="fmt-card on" onclick="selFmt('pdf',this)"><span class="fmt-icon">📕</span><div class="fmt-name">PDF</div><div class="fmt-desc">Print ready</div></div>
+          <div class="fmt-card" onclick="selFmt('txt',this)"><span class="fmt-icon">📄</span><div class="fmt-name">TXT</div><div class="fmt-desc">Plain text</div></div>
+          <div class="fmt-card" onclick="selFmt('html',this)"><span class="fmt-icon">🌐</span><div class="fmt-name">HTML</div><div class="fmt-desc">Web page</div></div>
+          <div class="fmt-card" onclick="selFmt('md',this)"><span class="fmt-icon">📝</span><div class="fmt-name">MD</div><div class="fmt-desc">Markdown</div></div>
+          <div class="fmt-card" onclick="selFmt('rtf',this)"><span class="fmt-icon">📘</span><div class="fmt-name">RTF/DOC</div><div class="fmt-desc">Word compat</div></div>
+          <div class="fmt-card" onclick="selFmt('epub',this)"><span class="fmt-icon">📱</span><div class="fmt-name">ePub</div><div class="fmt-desc">E-Book</div></div>
+        </div>
+      </div>
+      <div class="prog-bar" id="exp-prog" style="display:none"><div class="prog-fill" id="exp-fill"></div></div>
+      <div class="exp-actions">
+        <button class="exp-btn cancel" onclick="closeExp()">Cancel</button>
+        <button class="exp-btn primary" onclick="doExport()">⬇ Export </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  S&S BOOK — CORE JS
+// ═══════════════════════════════════════════════════════════════
+
+// ── STATE ──────────────────────────────────────────
+let pages = [];          // array of {id, html, style}
+let curIdx = 0;          // currently focused page index
+let zoom = 100;
+let expFmt = 'pdf';
+let camStream = null;
+let facingMode = 'environment';
+let scanned = [];        // [{dataURL}]
+let autoSaveTimer;
+let wcTimer;
+let landscape = false;
+let focusHidden = false;
+
+const SIZES = {
+  letter:[816,1056], a4:[794,1123], a5:[559,794], legal:[816,1344]
+};
+
+// ── BOOT ───────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  newDoc(true);
+  loadSave();
+  setupEvents();
+  // ribbon tabs
+  document.querySelectorAll('.rtab').forEach(t =>
+    t.addEventListener('click', () => goTab(t.dataset.tab))
+  );
+  // doc title rename
+  const dt = document.getElementById('doctitle');
+  dt.addEventListener('dblclick', () => {
+    const old = dt.textContent;
+    dt.contentEditable = 'true'; dt.focus();
+    document.execCommand('selectAll');
+    dt.onblur = () => { dt.contentEditable = 'false'; };
+    dt.onkeydown = e => { if(e.key==='Enter'){e.preventDefault();dt.blur();} };
+  });
+});
+
+// ── EVENTS ─────────────────────────────────────────
+function setupEvents(){
+  document.addEventListener('mouseup', handleSel);
+  document.addEventListener('touchend', () => setTimeout(handleSel,120));
+  document.addEventListener('mousedown', e => {
+    if(!e.target.closest('#floattb')) ftb(false);
+  });
+  document.addEventListener('keydown', e => {
+    if(e.ctrlKey||e.metaKey){
+      if(e.key==='s'){e.preventDefault();autoSave();toast('💾 Saved');}
+      if(e.key==='e'){e.preventDefault();openExport();}
+      if(e.key==='p'){e.preventDefault();window.print();}
+      if(e.key==='='||e.key==='+'){e.preventDefault();adjZoom(10);}
+      if(e.key==='-'){e.preventDefault();adjZoom(-10);}
+    }
+  });
+  window.addEventListener('beforeunload', autoSave);
+}
+
+// ── TAB SWITCHING ───────────────────────────────────
+function goTab(name){
+  document.querySelectorAll('.rtab').forEach(t=>t.classList.toggle('on',t.dataset.tab===name));
+  document.querySelectorAll('.tpanel').forEach(p=>p.classList.remove('on'));
+  const p=document.getElementById('tp-'+name);
+  if(p) p.classList.add('on');
+  if(name==='scan') openScan();
+  if(name==='templates') openTpl('all');
+  if(name==='format') openFmtPanel();
+}
+
+// ─────────────────────────────────────────────────────────
+//  PAGES ENGINE
+// ─────────────────────────────────────────────────────────
+function newDoc(silent){
+  if(!silent && !confirm('Start a new document? All page will be played.')) return;
+  pages = [];
+  curIdx = 0;
+  localStorage.removeItem('ss_book');
+  addPage(true);
+  if(!silent) toast('✅ New document');
+}
+
+function addPage(first){
+  const id = 'pg-'+Date.now();
+  const pg = {id, html: first ? '' : '', style:{}};
+  if(first){ pages=[pg]; }
+  else{ pages.splice(curIdx+1,0,pg); curIdx++; }
+  renderAll();
+  focusPage(curIdx);
+  schedSave();
+  toast(first?'':'📄 Naya page add ho gaya');
+}
+
+function deletePage(idx){
+  if(pages.length<=1){toast('At least 1 page required');return;}
+  if(!confirm('Is page ko delete karein?')) return;
+  pages.splice(idx,1);
+  if(curIdx>=pages.length) curIdx=pages.length-1;
+  renderAll();
+  focusPage(curIdx);
+  toast('Page deleted');
+}
+
+function focusPage(idx){
+  curIdx=idx;
+  // highlight current in canvas
+  document.querySelectorAll('.doc-page').forEach((p,i)=>{
+    p.classList.toggle('focused',i===idx);
+  });
+  // update sidebar
+  document.querySelectorAll('.page-thumb').forEach((t,i)=>t.classList.toggle('cur',i===idx));
+  // scroll canvas to page
+  const pgEl = document.querySelectorAll('.page-wrap')[idx];
+  if(pgEl) pgEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function renderAll(){
+  renderCanvas();
+  renderThumbs();
+  updateStats();
+}
+
+function renderCanvas(){
+  const canvas = document.getElementById('canvas');
+  // save current editors
+  document.querySelectorAll('.page-editor').forEach((ed,i)=>{
+    if(pages[i]) pages[i].html = ed.innerHTML;
+  });
+  canvas.innerHTML='';
+  pages.forEach((pg,i)=>{
+    const wrap = document.createElement('div');
+    wrap.className='page-wrap';
+
+    const lbl = document.createElement('div');
+    lbl.className='page-lbl';
+    lbl.innerHTML=`Page ${i+1} of ${pages.length} &nbsp; <button class="page-del-btn" onclick="deletePage(${i})">🗑 Delete</button>`;
+    wrap.appendChild(lbl);
+
+    const page = document.createElement('div');
+    page.className='doc-page';
+    page.id=pg.id;
+    // apply saved styles
+    if(pg.style) Object.assign(page.style, pg.style);
+
+    const ed = document.createElement('div');
+    ed.className='page-editor';
+    ed.contentEditable='true';
+    ed.spellcheck=true;
+    ed.setAttribute('data-ph','Start writing here…');
+    ed.innerHTML=pg.html||'';
+    ed.addEventListener('input',()=>{ pg.html=ed.innerHTML; schedSave(); schedWC(); });
+    ed.addEventListener('focus',()=>{ focusPage(i); });
+    ed.addEventListener('keydown', e => {
+      // Enter at end of page → add new page
+      if(e.key==='Enter' && e.shiftKey){
+        e.preventDefault(); addPage(); return;
+      }
+    });
+    page.appendChild(ed);
+
+    // page footer
+    if(pg.showPageNum){
+      const ft=document.createElement('div');
+      ft.className='page-footer';
+      ft.textContent='— '+(i+1)+' —';
+      page.appendChild(ft);
+    }
+    wrap.appendChild(page);
+    canvas.appendChild(wrap);
+  });
+  focusPage(curIdx);
+}
+
+function renderThumbs(){
+  const sc=document.getElementById('thumbscroll');
+  sc.innerHTML='';
+  pages.forEach((pg,i)=>{
+    const t=document.createElement('div');
+    t.className='page-thumb'+(i===curIdx?' cur':'');
+    const prv=document.createElement('div');
+    prv.className='pt-preview';
+    prv.innerHTML=pg.html||'<span style="color:#ccc;font-size:10px">Blank page</span>';
+    t.appendChild(prv);
+    const num=document.createElement('div');
+    num.className='pt-num'; num.textContent=i+1;
+    t.appendChild(num);
+    const del=document.createElement('button');
+    del.className='pt-del'; del.textContent='×';
+    del.onclick=e=>{e.stopPropagation();deletePage(i);};
+    t.appendChild(del);
+    t.addEventListener('click',()=>{
+      // save current before jump
+      document.querySelectorAll('.page-editor').forEach((ed,j)=>{if(pages[j])pages[j].html=ed.innerHTML;});
+      focusPage(i);
+      const pgEl=document.querySelectorAll('.page-wrap')[i];
+      if(pgEl) pgEl.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    sc.appendChild(t);
+  });
+}
+
+function getEd(){
+  // returns the currently focused page-editor
+  const eds=document.querySelectorAll('.page-editor');
+  return eds[curIdx]||eds[0];
+}
+function curPage(){
+  return document.querySelectorAll('.doc-page')[curIdx];
+}
+
+// ─────────────────────────────────────────────────────────
+//  COMMANDS
+// ─────────────────────────────────────────────────────────
+function cmdAll(cmd,val){
+  getEd().focus();
+  try{ document.execCommand(cmd,false,val||null); }catch(e){}
+}
+function insH(n){ cmdAll('formatBlock','h'+n); }
+function setFontSize(s){
+  cmdAll('fontSize',7);
+  document.querySelectorAll('font[size="7"]').forEach(el=>{el.removeAttribute('size');el.style.fontSize=s+'px';});
+}
+
+// ─────────────────────────────────────────────────────────
+//  INSERT FUNCTIONS
+// ─────────────────────────────────────────────────────────
+function insH(n){ cmdAll('formatBlock','h'+n); }
+
+function insQuote(){
+  const sel=window.getSelection();
+  const txt=sel&&!sel.isCollapsed?sel.toString():'Quote text yahan…';
+  cmdAll('insertHTML',`<blockquote>${txt}<cite>— Source</cite></blockquote><p><br></p>`);
+}
+function insCode(){
+  cmdAll('insertHTML',`<pre><code>// Code yahan likhein\n</code></pre><p><br></p>`);
+}
+function insTable(){
+  const r=parseInt(prompt('Rows (2-20):','3'))||3;
+  const c=parseInt(prompt('Columns (2-10):','3'))||3;
+  let h='<table>';
+  for(let i=0;i<r;i++){h+='<tr>'+Array(c).fill(i?'<td>Cell</td>':'<th>Heading</th>').join('')+'</tr>';}
+  cmdAll('insertHTML',h+'</table><p><br></p>');
+  toast('Table insert ho gaya');
+}
+function insImage(){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';inp.multiple=true;
+  inp.onchange=e=>{
+    Array.from(e.target.files).forEach(f=>{
+      const rd=new FileReader();
+      rd.onload=ev=>{ cmdAll('insertImage',ev.target.result); toast('Image add ho gayi'); };
+      rd.readAsDataURL(f);
+    });
+  };
+  inp.click();
+}
+function insLink(){
+  const url=prompt('URL:','https://');
+  if(url){ cmdAll('createLink',url); toast('Link add ho gaya'); }
+}
+function insHR(){
+  cmdAll('insertHTML','<hr/><p><br></p>');
+}
+function insTOC(){
+  const ed=getEd();
+  const heads=ed.querySelectorAll('h1,h2,h3,h4');
+  if(!heads.length){toast('Pehle headings add karo');return;}
+  let h=`<div style="border:2px solid rgba(200,134,10,0.4);border-radius:8px;padding:16px 20px;margin:16px 0;background:rgba(200,134,10,0.04)"><div style="font-family:'Cinzel',serif;font-size:14px;font-weight:600;margin-bottom:12px;color:#8b6914;letter-spacing:2px">TABLE OF CONTENTS</div>`;
+  heads.forEach((el,i)=>{
+    const lvl=parseInt(el.tagName[1]);
+    h+=`<div style="padding:3px 0 3px ${(lvl-1)*14}px;font-size:${lvl===1?13:12}px;${lvl===1?'font-weight:600':'font-style:italic'};color:#444;border-bottom:1px dotted #e0d8c8;display:flex;justify-content:space-between"><span>${el.textContent}</span><span style="color:#aaa">${i+1}</span></div>`;
+  });
+  h+='</div><p><br></p>';
+  ed.insertAdjacentHTML('afterbegin',h);
+  toast('Table of Contents add ho gaya');
+}
+function insFootnote(){
+  const txt=prompt('Footnote:','Reference text');
+  if(txt) cmdAll('insertHTML',`<sup style="color:var(--gold);cursor:help;font-size:0.75em" title="${txt}">[†]</sup>`);
+}
+function insPageNum(){
+  const pg=curPage();
+  const existing=pg.querySelector('.page-footer');
+  const idx=curIdx;
+  if(existing){existing.remove();pages[idx].showPageNum=false;toast('Page number hata diya');}
+  else{
+    const ft=document.createElement('div');
+    ft.className='page-footer';ft.textContent='— '+(idx+1)+' —';
+    pg.appendChild(ft);pages[idx].showPageNum=true;toast('Page number add ho gaya');
+  }
+}
+function insDate(){
+  const d=new Date().toLocaleDateString('hi-IN',{year:'numeric',month:'long',day:'numeric'});
+  cmdAll('insertText',d);
+}
+function insSig(){
+  cmdAll('insertHTML','<br><table style="width:100%;border:none;margin:24px 0"><tr><td style="border:none;border-bottom:1px solid #333;width:200px;padding-bottom:4px">&nbsp;</td><td style="border:none;width:40px"></td><td style="border:none;border-bottom:1px solid #333;width:120px;padding-bottom:4px">&nbsp;</td></tr><tr><td style="border:none;font-size:10px;color:#888;padding-top:3px">Hastaakshar / Signature</td><td style="border:none"></td><td style="border:none;font-size:10px;color:#888;padding-top:3px">Taareekh / Date</td></tr></table><p><br></p>');
+}
+function insDropCap(){
+  const sel=window.getSelection();
+  const range=sel&&sel.rangeCount?sel.getRangeAt(0):null;
+  if(!range) return;
+  cmdAll('formatBlock','p');
+  const el=document.querySelectorAll('.doc-page')[curIdx].querySelector('p:last-of-type')||getEd().firstElementChild;
+  if(el) el.classList.add('drop-cap');
+  toast('Drop cap add ho gaya');
+}
+function insChapter(){
+  const num=prompt('Chapter number:','1')||'1';
+  const title=prompt('Chapter title:','Ek Naya Safar')||'Chapter Title';
+  cmdAll('insertHTML',`<div><div class="chapter-num">CHAPTER ${num}</div><div class="chapter-title">${title}</div><hr/></div><p><br></p>`);
+}
+function insSceneBreak(){
+  cmdAll('insertHTML','<div class="scene-break">✦ &nbsp; ✦ &nbsp; ✦</div><p><br></p>');
+}
+function insPullQuote(){
+  const txt=prompt('Pull quote text:','Memorable quote yahan…')||'';
+  if(txt) cmdAll('insertHTML',`<div class="pull-quote">${txt}</div><p><br></p>`);
+}
+function insEpigraph(){
+  const txt=prompt('Epigraph text:','')||'';
+  const src=prompt('Source / Author:','')||'';
+  if(txt) cmdAll('insertHTML',`<div class="epigraph">"${txt}"<br><small style="font-size:0.85em;color:#888">— ${src}</small></div><p><br></p>`);
+}
+function insWatermark(){
+  insWatermarkToPage(curIdx);
+}
+function insWatermarkToPage(idx){
+  const pg=document.querySelectorAll('.doc-page')[idx];
+  if(!pg) return;
+  pg.querySelector('.wm-overlay')?.remove();
+  const txt=prompt('Watermark text (e.g. DRAFT):','DRAFT');
+  if(!txt) return;
+  const wm=document.createElement('div');
+  wm.className='wm-overlay';
+  wm.textContent=txt;
+  wm.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:72px;font-weight:700;color:rgba(180,60,60,0.09);pointer-events:none;user-select:none;white-space:nowrap;z-index:0;font-family:Cinzel,serif;letter-spacing:4px;';
+  pg.style.position='relative';
+  pg.appendChild(wm);
+  toast('Watermark add ho gaya');
+}
+function setIndent(type){
+  const ed=getEd();
+  if(type==='first') ed.style.textIndent='1.5em';
+  else if(type==='hanging'){ ed.style.paddingLeft='1.5em'; ed.style.textIndent='-1.5em'; }
+  else if(type==='block'){ ed.style.marginLeft='2em'; }
+  toast('Indent set: '+type);
+}
+
+// ─────────────────────────────────────────────────────────
+//  BOOK STYLE PRESETS
+// ─────────────────────────────────────────────────────────
+const BOOK_STYLES = {
+  novel:{
+    editorStyle:{fontFamily:"'Cormorant Garamond',Georgia,serif",fontSize:'16px',lineHeight:'1.9',textAlign:'justify',color:'#1a1a1a'},
+    pageStyle:{background:'#fefcf7',padding:'96px 80px 80px 100px'},
+    label:'📚 Novel style lagaya'
+  },
+  academic:{
+    editorStyle:{fontFamily:"'Times New Roman',serif",fontSize:'14px',lineHeight:'2',textAlign:'left',color:'#000'},
+    pageStyle:{background:'#fff',padding:'100px 90px'},
+    label:'🎓 Academic style lagaya'
+  },
+  poetry:{
+    editorStyle:{fontFamily:"'Cormorant Garamond',serif",fontSize:'15px',lineHeight:'2.2',textAlign:'center',color:'#1a1a1a',fontStyle:'italic'},
+    pageStyle:{background:'#faf8f5',padding:'80px 120px'},
+    label:'🌸 Poetry style lagaya'
+  },
+  textbook:{
+    editorStyle:{fontFamily:"'DM Sans',sans-serif",fontSize:'14px',lineHeight:'1.7',textAlign:'left',color:'#111'},
+    pageStyle:{background:'#fff',padding:'80px 70px'},
+    label:'📖 Textbook style lagaya'
+  },
+  magazine:{
+    editorStyle:{fontFamily:"'DM Sans',sans-serif",fontSize:'13px',lineHeight:'1.6',textAlign:'left',color:'#111',columnCount:'2',columnGap:'32px',columnRule:'1px solid #e0d8c8'},
+    pageStyle:{background:'#fff',padding:'60px'},
+    label:'📰 Magazine style lagaya'
+  },
+  screenplay:{
+    editorStyle:{fontFamily:"'Courier New',monospace",fontSize:'12px',lineHeight:'1.5',textAlign:'left',color:'#000'},
+    pageStyle:{background:'#fff',padding:'96px 80px 80px 100px'},
+    label:'🎬 Screenplay style lagaya'
+  },
+  children:{
+    editorStyle:{fontFamily:"Georgia,serif",fontSize:'20px',lineHeight:'2.2',textAlign:'center',color:'#1a1a1a'},
+    pageStyle:{background:'#fffef0',padding:'60px'},
+    label:'🧸 Children\'s book style lagaya'
+  },
+  legal:{
+    editorStyle:{fontFamily:"'Times New Roman',serif",fontSize:'13px',lineHeight:'2',textAlign:'justify',color:'#000'},
+    pageStyle:{background:'#fff',padding:'100px 80px'},
+    label:'⚖️ Legal style lagaya'
+  },
+};
+
+function applyBookStyle(name){
+  const s=BOOK_STYLES[name]; if(!s) return;
+  // apply to ALL pages
+  document.querySelectorAll('.page-editor').forEach(ed=>Object.assign(ed.style,s.editorStyle));
+  document.querySelectorAll('.doc-page').forEach(pg=>Object.assign(pg.style,s.pageStyle));
+  toast(s.label);
+  schedSave();
+}
+
+// ─────────────────────────────────────────────────────────
+//  LAYOUT
+// ─────────────────────────────────────────────────────────
+function setSize(name){
+  const [w,h]=SIZES[name]||SIZES.letter;
+  document.querySelectorAll('.doc-page').forEach(pg=>{
+    pg.style.width=Math.min(w,window.innerWidth-60)+'px';
+    pg.style.minHeight=h+'px';
+  });
+  toast('Page size: '+name.toUpperCase());
+}
+function toggleOrientation(){
+  landscape=!landscape;
+  document.querySelectorAll('.doc-page').forEach(pg=>{
+    if(landscape){pg.style.width=Math.min(1056,window.innerWidth-60)+'px';pg.style.minHeight='816px';}
+    else{pg.style.width=Math.min(816,window.innerWidth-60)+'px';pg.style.minHeight='1056px';}
+  });
+  toast('Orientation: '+(landscape?'Landscape':'Portrait'));
+}
+const MARGINS={
+  book:'96px 80px 80px 100px',
+  normal:'96px',
+  narrow:'48px',
+  wide:'140px',
+  mirror:'96px 80px 80px 100px'
+};
+function setMargin(t){
+  document.querySelectorAll('.doc-page').forEach(pg=>pg.style.padding=MARGINS[t]||MARGINS.normal);
+  toast('Margins: '+t);
+}
+function setCustomMarginSide(side,val){
+  const pg=curPage();if(!pg)return;
+  const map={top:'paddingTop',bottom:'paddingBottom',left:'paddingLeft',right:'paddingRight'};
+  pg.style[map[side]]=val+'px';
+}
+function setCols(n){
+  document.querySelectorAll('.page-editor').forEach(ed=>{
+    ed.style.columnCount=n>1?n:'';
+    ed.style.columnGap=n>1?'28px':'';
+    ed.style.columnRule=n>1?'1px solid #e0d8c8':'';
+  });
+  toast('Columns: '+n);
+}
+function setSpacing(s){
+  const vals={single:'1.4','1.5':'1.6',double:'2'};
+  document.querySelectorAll('.page-editor').forEach(ed=>ed.style.lineHeight=vals[s]||s);
+  toast('Spacing: '+s);
+}
+function setShadow(v){
+  const s=['none','0 2px 8px rgba(0,0,0,0.2)','0 4px 20px rgba(0,0,0,0.3)','0 8px 40px rgba(0,0,0,0.45)','0 12px 60px rgba(0,0,0,0.6)','0 20px 80px rgba(0,0,0,0.75)'];
+  document.querySelectorAll('.doc-page').forEach(pg=>pg.style.boxShadow=s[v]||s[3]);
+}
+function applyPgTheme(bg,fg){
+  const pg=curPage(); if(!pg)return;
+  pg.style.background=bg;
+  getEd().style.color=fg;
+}
+
+// ─────────────────────────────────────────────────────────
+//  CAMERA / BATCH SCAN
+// ─────────────────────────────────────────────────────────
+function openScan(){
+  document.getElementById('scanoverlay').classList.add('show');
+  document.getElementById('cam-perm').style.display='block';
+  document.getElementById('cam-live').style.display='none';
+  setCS('Camera shuru karne ke liye button dabao','info');
+}
+function closeScan(){
+  stopCam();
+  document.getElementById('scanoverlay').classList.remove('show');
+}
+function setCS(msg,cls){
+  const el=document.getElementById('camstatus');
+  el.textContent=msg; el.className=cls;
+}
+
+async function startCam(){
+  document.getElementById('cam-perm').style.display='none';
+  setCS('Camera load ho rahi hai…','info');
+  if(!navigator.mediaDevices?.getUserMedia){
+    setCS('❌ Camera support is not available in this browser','err');
+    document.getElementById('cam-perm').style.display='block';
+    return;
+  }
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:facingMode},width:{ideal:1280},height:{ideal:960}},
+      audio:false
+    });
+    const vid=document.getElementById('camvid');
+    vid.srcObject=camStream;
+    await vid.play();
+    document.getElementById('cam-live').style.display='flex';
+    setCS('✅ Camera active — place the page in the frame and press capture','ok');
+  }catch(err){
+    let msg='❌ Camera nahi mila';
+    if(err.name==='NotAllowedError') msg='❌ To gave permission — Allow camera in browser settings';
+    else if(err.name==='NotFoundError') msg='❌ Koi camera nahi mila';
+    else if(err.name==='NotReadableError') msg='❌ Camera is using another app';
+    setCS(msg,'err');
+    document.getElementById('cam-perm').style.display='block';
+  }
+}
+
+function stopCam(){
+  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+  const v=document.getElementById('camvid');
+  if(v) v.srcObject=null;
+}
+
+function flipCam(){
+  facingMode=facingMode==='environment'?'user':'environment';
+  stopCam();
+  document.getElementById('cam-live').style.display='none';
+  document.getElementById('cam-perm').style.display='block';
+  startCam();
+  toast('Camera flip ho gaya');
+}
+
+function snapPage(){
+  const vid=document.getElementById('camvid');
+  if(!camStream||!vid.srcObject){toast('Plese start the camera');return;}
+  if(vid.videoWidth===0){toast('The video is loading…');return;}
+  const cv=document.getElementById('camcanvas');
+  cv.width=vid.videoWidth; cv.height=vid.videoHeight;
+  cv.getContext('2d').drawImage(vid,0,0);
+  const dataURL=cv.toDataURL('image/jpeg',0.88);
+  scanned.push({dataURL});
+  renderScanGrid();
+  setCS(`✅ Page ${scanned.length} Got captured — Capture the page or add`,'ok');
+  toast(`📸 Page ${scanned.length} scan is done`);
+}
+
+function renderScanGrid(){
+  const grid=document.getElementById('scan-grid');
+  grid.innerHTML='';
+  document.getElementById('scancount').textContent=scanned.length;
+  document.getElementById('scan-footer').style.display=scanned.length?'flex':'none';
+  updateSelCount();
+  scanned.forEach((sc,i)=>{
+    const item=document.createElement('div');
+    item.className='sg-item selected';
+    item.dataset.i=i;
+    const img=document.createElement('img');
+    img.src=sc.dataURL;
+    const del=document.createElement('button');
+    del.className='sg-del'; del.textContent='×';
+    del.onclick=e=>{e.stopPropagation();scanned.splice(i,1);renderScanGrid();};
+    const num=document.createElement('div');
+    num.className='sg-num'; num.textContent='Pg '+(i+1);
+    const chk=document.createElement('div');
+    chk.className='sg-check'; chk.innerHTML='✓';
+    item.append(img,del,num,chk);
+    item.addEventListener('click',()=>{
+      item.classList.toggle('selected');
+      updateSelCount();
+    });
+    grid.appendChild(item);
+  });
+}
+
+function updateSelCount(){
+  const sel=document.querySelectorAll('.sg-item.selected').length;
+  document.getElementById('selcount').textContent=sel;
+}
+
+function importScanned(){
+  const selected=Array.from(document.querySelectorAll('.sg-item.selected'));
+  if(!selected.length){toast('No page is selected');return;}
+  // save current
+  document.querySelectorAll('.page-editor').forEach((ed,j)=>{if(pages[j])pages[j].html=ed.innerHTML;});
+  let insertAfter=curIdx;
+  selected.forEach(item=>{
+    const i=parseInt(item.dataset.i);
+    const dataURL=scanned[i].dataURL;
+    const newPg={id:'pg-'+Date.now()+'-'+i,html:`<div style="text-align:center"><img src="${dataURL}" style="max-width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.15)"/></div>`,style:{}};
+    pages.splice(insertAfter+1,0,newPg);
+    insertAfter++;
+  });
+  curIdx=insertAfter;
+  renderAll();
+  closeScan();
+  scanned=[];
+  toast(`✅ ${selected.length} scanned pages added to the document!`);
+}
+
+function clearScanned(){
+  if(!scanned.length) return;
+  if(confirm('Clear all scanned pages?')){
+    scanned=[];renderScanGrid();toast('Got cleared');
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+//  FORMAT PANEL
+// ─────────────────────────────────────────────────────────
+function openFmtPanel(){
+  document.getElementById('fmtpanel').classList.remove('closed');
+}
+function closeFmtPanel(){
+  document.getElementById('fmtpanel').classList.add('closed');
+}
+function toggleSec(hd){
+  hd.classList.toggle('open');
+  hd.nextElementSibling.classList.toggle('open');
+}
+
+// ─────────────────────────────────────────────────────────
+//  TEMPLATES
+// ─────────────────────────────────────────────────────────
+const TEMPLATES=[
+  {id:'classic-novel',name:'Classic Novel',type:'books',html:tpl_classicNovel()},
+  {id:'modern-cover',name:'Modern Cover',type:'books',html:tpl_modern()},
+  {id:'journal',name:'Leather Journal',type:'books',html:tpl_journal()},
+  {id:'romance',name:'Romance Novel',type:'books',html:tpl_romance()},
+  {id:'thriller',name:'Dark Thriller',type:'books',html:tpl_thriller()},
+  {id:'ebook-min',name:'Minimal E-Book',type:'ebooks',html:tpl_ebookMin()},
+  {id:'ebook-vib',name:'Vibrant E-Book',type:'ebooks',html:tpl_ebookVib()},
+  {id:'ebook-tech',name:'Tech E-Book',type:'ebooks',html:tpl_ebookTech()},
+  {id:'cert-gold',name:'Gold Certificate',type:'certs',html:tpl_certGold()},
+  {id:'cert-formal',name:'Formal Certificate',type:'certs',html:tpl_certFormal()},
+  {id:'cert-honor',name:'Honor Certificate',type:'certs',html:tpl_certHonor()},
+  {id:'report-light',name:'Business Report',type:'reports',html:tpl_reportLight()},
+  {id:'report-dark',name:'Dark Report',type:'reports',html:tpl_reportDark()},
+];
+
+function tpl_classicNovel(){return`<div style="min-height:500px;background:linear-gradient(160deg,#1a0a05,#3d1c08);color:#f0e0c0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;font-family:'Cinzel',serif;position:relative"><div style="border:2px solid rgba(240,220,160,0.25);position:absolute;inset:18px;pointer-events:none"></div><div style="font-size:9px;letter-spacing:5px;color:#c8a060;text-transform:uppercase;margin-bottom:22px">A Novel by</div><div style="font-size:42px;font-weight:700;line-height:1.1;margin-bottom:8px">The Shadow<br><span style="font-size:0.7em;font-style:italic;color:#e0c090">of Yesterday</span></div><div style="width:44px;height:2px;background:#c8860a;margin:20px auto"></div><div style="font-size:12px;letter-spacing:3px;color:#c8a060">AUTHOR NAME</div><div style="position:absolute;bottom:24px;font-size:8px;color:rgba(200,160,80,0.4);letter-spacing:4px">S&S BOOK PRESS</div></div>`;}
+function tpl_modern(){return`<div style="min-height:500px;background:linear-gradient(135deg,#0a1628,#1e3a5f);color:#fff;display:flex;flex-direction:column;padding:60px;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden"><div style="position:absolute;top:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:rgba(74,127,181,0.15)"></div><div style="font-size:9px;letter-spacing:4px;color:#4a7fb5;text-transform:uppercase;margin-bottom:auto">Non-Fiction</div><div><div style="font-size:44px;font-weight:700;line-height:1;margin-bottom:10px">The Future<br>Is Now</div><div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:24px">A practical guide to modern innovation</div><div style="width:32px;height:3px;background:#c8860a;margin-bottom:16px"></div><div style="font-size:11px;letter-spacing:1px;color:#c8860a;text-transform:uppercase">Author Name</div></div></div>`;}
+function tpl_journal(){return`<div style="min-height:500px;background:linear-gradient(160deg,#f5e6c8,#e8d5a8);color:#5c3d1a;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;font-family:'Cormorant Garamond',serif;border:6px solid #c8a060"><div style="font-size:28px;margin-bottom:12px">📖</div><div style="font-size:32px;font-weight:700;margin-bottom:8px">My Journal</div><div style="width:60px;height:2px;background:#c8860a;margin:10px auto"></div><div style="font-size:11px;letter-spacing:1px;color:#8b6914;margin-bottom:24px">Personal Reflections &amp; Memories</div><div style="font-size:9px;color:#b8982a">— ${new Date().getFullYear()} —</div></div>`;}
+function tpl_romance(){return`<div style="min-height:500px;background:linear-gradient(160deg,#2a0a1a,#4a1030);color:#f0c0d0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;font-family:'Cormorant Garamond',serif;position:relative"><div style="position:absolute;inset:14px;border:1px solid rgba(240,160,180,0.2)"></div><div style="font-size:30px;margin-bottom:12px">🌹</div><div style="font-size:38px;font-weight:700;font-style:italic;line-height:1.1;margin-bottom:14px">When Hearts<br>Collide</div><div style="width:44px;height:1px;background:rgba(240,160,180,0.5);margin:12px auto"></div><div style="font-size:11px;letter-spacing:2px;color:#c08090;margin-top:14px">AUTHOR NAME</div></div>`;}
+function tpl_thriller(){return`<div style="min-height:500px;background:#0a0a0a;color:#e8e8e8;display:flex;flex-direction:column;padding:60px;font-family:'Cinzel',serif;position:relative"><div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#c0392b,transparent)"></div><div style="font-size:9px;letter-spacing:6px;color:#c0392b;text-transform:uppercase;margin-bottom:auto">Thriller</div><div style="font-size:48px;font-weight:700;line-height:0.9;color:#fff;margin-bottom:14px">DEAD<br><span style="font-size:0.5em;color:#c0392b;letter-spacing:8px">SILENCE</span></div><div style="font-size:11px;color:#666;margin-bottom:24px">The truth always finds its way out.</div><div style="font-size:10px;letter-spacing:2px;color:#555">Author Name</div></div>`;}
+function tpl_ebookMin(){return`<div style="min-height:500px;background:#fafafa;color:#111;display:flex;flex-direction:column;justify-content:flex-end;padding:60px;font-family:'DM Sans',sans-serif"><div style="width:4px;height:52px;background:#111;margin-bottom:20px"></div><div style="font-size:40px;font-weight:700;line-height:1;margin-bottom:12px;max-width:340px">Design Thinking</div><div style="font-size:12px;color:#666;margin-bottom:26px;max-width:280px">A comprehensive guide to human-centered design</div><div style="font-size:10px;letter-spacing:2px;color:#999;text-transform:uppercase">Author · ${new Date().getFullYear()}</div></div>`;}
+function tpl_ebookVib(){return`<div style="min-height:500px;background:linear-gradient(135deg,#e74c3c,#e67e22);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;font-family:'DM Sans',sans-serif"><div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;opacity:0.8">E-BOOK</div><div style="font-size:44px;font-weight:700;line-height:1;margin-bottom:12px">Master<br>Your Craft</div><div style="width:40px;height:3px;background:rgba(255,255,255,0.5);margin:12px auto"></div><div style="font-size:13px;opacity:0.85">10 Lessons from Industry Experts</div></div>`;}
+function tpl_ebookTech(){return`<div style="min-height:500px;background:#0d1117;color:#58a6ff;display:flex;flex-direction:column;padding:60px;font-family:'JetBrains Mono',monospace"><div style="font-size:9px;color:#3d8348;margin-bottom:auto">// S&S BOOK PRESS</div><div style="font-size:11px;color:#8b949e;margin-bottom:4px">class Book {</div><div style="font-size:32px;font-weight:700;color:#58a6ff;padding-left:16px;margin-bottom:4px">The Art of<br>Clean Code</div><div style="font-size:11px;color:#8b949e;margin-bottom:20px">}</div><div style="font-size:10px;color:#3d8348">/* Elegant software */</div><div style="margin-top:24px;font-size:10px;color:#6e7681">author: "Your Name"</div></div>`;}
+function tpl_certGold(){return`<div style="min-height:500px;background:linear-gradient(160deg,#fff8e8,#faf0d0);color:#8b6914;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;font-family:'Cormorant Garamond',serif;border:8px double #c8a020;position:relative"><div style="border:1px solid rgba(200,160,32,0.3);position:absolute;inset:12px"></div><div style="font-size:22px;margin-bottom:6px">🏆</div><div style="font-size:10px;letter-spacing:4px;text-transform:uppercase;margin-bottom:6px;color:#b8920a">Certificate of Achievement</div><div style="width:60px;height:1px;background:#c8860a;margin:10px auto"></div><div style="font-size:11px;margin:12px 0;color:#a07820">This is to certify that</div><div style="font-size:28px;font-weight:700;font-style:italic;color:#5c3d0a">[Recipient Name]</div><div style="width:160px;height:1px;background:#c8860a;margin:4px auto"></div><div style="font-size:11px;margin:12px 0;color:#a07820;line-height:1.7">has successfully completed<br><strong style="color:#5c3d0a">[Course]</strong></div><div style="font-size:9px;color:#b8920a;margin-top:24px">Date ____________ Signature ____________</div></div>`;}
+function tpl_certFormal(){return`<div style="min-height:500px;background:#fff;color:#1a2a4a;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;font-family:'Cormorant Garamond',serif;border:6px solid #1a2a4a;position:relative"><div style="border:1px solid #1a2a4a;position:absolute;inset:10px"></div><div style="font-size:18px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Certificate</div><div style="font-size:10px;letter-spacing:3px;color:#4a6a9a;text-transform:uppercase;margin-bottom:16px">of Completion</div><div style="width:44px;height:2px;background:#1a2a4a;margin:10px auto"></div><div style="font-size:11px;margin:16px 0;color:#4a5a6a">This certifies that</div><div style="font-size:28px;font-style:italic;margin:6px 0">[Full Name]</div><div style="width:180px;height:1px;background:#ccc;margin:6px auto"></div><div style="font-size:10px;margin:12px 0;color:#4a5a6a;line-height:1.9">has fulfilled all requirements for<br><strong>[Program]</strong></div><div style="display:flex;gap:60px;margin-top:32px;font-size:9px;color:#4a5a6a"><div>_______<br>Director</div><div>_______<br>Date</div></div></div>`;}
+function tpl_certHonor(){return`<div style="min-height:500px;background:linear-gradient(160deg,#1a1a2e,#0f3460);color:#e8d5a3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;font-family:'Cormorant Garamond',serif;position:relative"><div style="position:absolute;inset:14px;border:1px solid rgba(232,213,163,0.25)"></div><div style="font-size:26px;margin-bottom:8px">⭐</div><div style="font-size:9px;letter-spacing:5px;text-transform:uppercase;color:#c8a050;margin-bottom:8px">With Honors</div><div style="font-size:22px;font-weight:700;margin-bottom:6px">Certificate of Excellence</div><div style="width:44px;height:1px;background:rgba(232,213,163,0.5);margin:12px auto"></div><div style="font-size:10px;color:rgba(232,213,163,0.7);margin:8px 0">Presented to</div><div style="font-size:30px;font-style:italic;margin:6px 0">[Name]</div><div style="font-size:10px;color:rgba(232,213,163,0.7);margin:12px 0;max-width:240px;line-height:1.8">In recognition of outstanding achievement</div><div style="margin-top:24px;font-size:8px;letter-spacing:2px;color:rgba(200,160,80,0.4)">S&S BOOK · ${new Date().getFullYear()}</div></div>`;}
+function tpl_reportLight(){return`<div style="min-height:500px;background:#fff;color:#1a2a4a;font-family:'DM Sans',sans-serif;overflow:hidden"><div style="background:#1a2a4a;color:#fff;padding:28px 36px;display:flex;align-items:center;gap:14px"><div style="width:4px;height:36px;background:#c8860a;flex-shrink:0"></div><div><div style="font-size:18px;font-weight:700">Annual Report ${new Date().getFullYear()}</div><div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:2px">Company Name</div></div></div><div style="padding:32px 36px"><div style="font-size:11px;color:#4a5a6a;line-height:1.8;margin-bottom:16px">Executive Summary: Comprehensive performance analysis for this quarter.</div><div style="border-left:3px solid #c8860a;padding:8px 12px;background:#faf8f2;margin:14px 0;font-size:10px;color:#5c3d0a">Key insight or highlighted metric.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px"><div style="background:#f5f0e8;border-radius:4px;padding:12px"><div style="font-size:20px;font-weight:700;color:#c8860a">94%</div><div style="font-size:9px;color:#666">Satisfaction</div></div><div style="background:#f5f0e8;border-radius:4px;padding:12px"><div style="font-size:20px;font-weight:700;color:#1a2a4a">2.4M</div><div style="font-size:9px;color:#666">Revenue</div></div></div></div></div>`;}
+function tpl_reportDark(){return`<div style="min-height:500px;background:#0d1117;color:#c9d1d9;padding:60px;font-family:'DM Sans',sans-serif"><div style="margin-bottom:32px"><div style="font-size:8px;letter-spacing:3px;color:#58a6ff;text-transform:uppercase;margin-bottom:6px">Strategic Analysis</div><div style="font-size:26px;font-weight:700;color:#fff">Market Intelligence<br>Report ${new Date().getFullYear()}</div><div style="width:32px;height:3px;background:#58a6ff;margin-top:12px"></div></div><div style="font-size:11px;line-height:2;color:#8b949e;margin-bottom:16px">Comprehensive analysis of market trends and opportunities.</div><div style="border:1px solid #30363d;border-radius:4px;padding:12px"><div style="font-size:8px;color:#58a6ff;margin-bottom:8px">METRICS</div><div style="display:flex;gap:18px"><div><div style="font-size:22px;font-weight:700;color:#3fb950">↑ 28%</div><div style="font-size:9px;color:#8b949e">Growth</div></div><div><div style="font-size:22px;font-weight:700;color:#58a6ff">142K</div><div style="font-size:9px;color:#8b949e">Users</div></div><div><div style="font-size:22px;font-weight:700;color:#d29922">$4.2M</div><div style="font-size:9px;color:#8b949e">Revenue</div></div></div></div></div>`;}
+
+function openTpl(filter){
+  document.getElementById('tpl-modal').classList.add('show');
+  buildTplGrid(filter);
+}
+function closeTpl(){ document.getElementById('tpl-modal').classList.remove('show'); }
+function filterTpl(f,btn){
+  document.querySelectorAll('.tcat').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); buildTplGrid(f);
+}
+function buildTplGrid(filter){
+  const grid=document.getElementById('tplgrid'); grid.innerHTML='';
+  const list=filter==='all'?TEMPLATES:TEMPLATES.filter(t=>t.type===filter);
+  list.forEach(t=>{
+    const card=document.createElement('div');
+    card.className='tpl-card';
+    const pw=document.createElement('div'); pw.className='tpl-prw-wrap';
+    const prv=document.createElement('div'); prv.className='tpl-prw';
+    prv.innerHTML=t.html; pw.appendChild(prv);
+    const info=document.createElement('div'); info.className='tpl-info';
+    info.innerHTML=`<div class="tpl-nm">${t.name}</div><div class="tpl-tp">${t.type}</div>`;
+    card.append(pw,info);
+    card.addEventListener('click',()=>{
+      // apply to current page
+      document.querySelectorAll('.page-editor').forEach((ed,j)=>{if(pages[j])pages[j].html=ed.innerHTML;});
+      pages[curIdx].html=t.html+'<p><br></p><p>Yahan likhna shuru karein…</p>';
+      renderAll(); closeTpl(); toast('✅ Template lagaya: '+t.name);
+    });
+    grid.appendChild(card);
+  });
+}
+
+// ─────────────────────────────────────────────────────────
+//  EXPORT
+// ─────────────────────────────────────────────────────────
+function openExport(){ document.getElementById('exp-modal').classList.add('show'); }
+function closeExp(){ document.getElementById('exp-modal').classList.remove('show'); }
+function selFmt(f,btn){
+  expFmt=f;
+  document.querySelectorAll('.fmt-card').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function doExport(){
+  const fn=document.getElementById('expname').value.trim()||'S&S-Book';
+  const pg=document.getElementById('exp-prog');
+  const fl=document.getElementById('exp-fill');
+  pg.style.display='block'; fl.style.width='0%';
+  let p=0;
+  const iv=setInterval(()=>{ p=Math.min(p+18,88); fl.style.width=p+'%'; },70);
+  setTimeout(()=>{
+    clearInterval(iv); fl.style.width='100%';
+    setTimeout(()=>{
+      if(expFmt==='pdf') window.print();
+      else if(expFmt==='txt') dlBlob(new Blob([getAllText()],{type:'text/plain'}),fn+'.txt');
+      else if(expFmt==='html') dlBlob(new Blob([getAllHTML(fn)],{type:'text/html'}),fn+'.html');
+      else if(expFmt==='md') dlBlob(new Blob([htmlToMd(getAllText())],{type:'text/markdown'}),fn+'.md');
+      else if(expFmt==='rtf') dlBlob(new Blob([`{\\rtf1\\ansi ${getAllText().replace(/\n/g,'\\par ')}}`],{type:'application/rtf'}),fn+'.rtf');
+      else if(expFmt==='epub') dlBlob(new Blob([getAllHTML(fn)],{type:'text/html'}),fn+'_epub.html');
+      pg.style.display='none'; fl.style.width='0%';
+      closeExp(); toast('✅ Export complete!');
+    },250);
+  },600);
+}
+
+function getAllText(){
+  // save first
+  document.querySelectorAll('.page-editor').forEach((ed,j)=>{if(pages[j])pages[j].html=ed.innerHTML;});
+  return pages.map((pg,i)=>`--- Page ${i+1} ---\n`+stripHTML(pg.html)).join('\n\n');
+}
+function getAllHTML(title){
+  document.querySelectorAll('.page-editor').forEach((ed,j)=>{if(pages[j])pages[j].html=ed.innerHTML;});
+  const css=`body{font-family:Georgia,serif;max-width:780px;margin:40px auto;padding:20px;line-height:1.85}h1,h2,h3{font-family:serif}.doc-page{margin:40px 0;padding:60px;background:#fefcf7;box-shadow:0 2px 12px rgba(0,0,0,0.1);page-break-after:always}blockquote{border-left:4px solid #c8860a;padding:8px 16px;font-style:italic}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:8px}th{background:#f0ece4}hr::after{content:'✦ ✦ ✦';display:block;text-align:center;color:#ccc}`;
+  const body=pages.map((pg,i)=>`<div class="doc-page"><h6 style="color:#aaa;font-weight:normal;margin-bottom:16px">Page ${i+1}</h6>${pg.html}</div>`).join('');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>${title}</title><style>${css}</style></head><body>${body}</body></html>`;
+}
+function stripHTML(h){ return h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); }
+function htmlToMd(t){ return t; }
+function dlBlob(blob,fn){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=fn;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+// ─────────────────────────────────────────────────────────
+//  VIEW
+// ─────────────────────────────────────────────────────────
+function setZoom(z){
+  zoom=z;
+  document.getElementById('canvas').style.zoom=z/100;
+  document.getElementById('zoom-val').textContent=z+'%';
+}
+function adjZoom(d){ setZoom(Math.max(25,Math.min(200,zoom+d))); }
+function togglePages(){ document.getElementById('pagepanel').classList.toggle('closed'); }
+function toggleFS(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(()=>{});
+  else document.exitFullscreen?.();
+}
+function toggleFocus(){
+  focusHidden=!focusHidden;
+  document.getElementById('toolpanel').style.display=focusHidden?'none':'';
+  document.getElementById('statusbar').style.display=focusHidden?'none':'';
+  toast(focusHidden?'🎯 Focus mode ON':'Focus mode OFF');
+}
+
+// ─────────────────────────────────────────────────────────
+//  FLOATING TOOLBAR
+// ─────────────────────────────────────────────────────────
+function ftb(show){ document.getElementById('floattb').classList.toggle('show',show); }
+function handleSel(){
+  const sel=window.getSelection();
+  if(!sel||sel.isCollapsed){return;}
+  // check if inside an editor
+  let node=sel.anchorNode;
+  while(node&&node!==document.body){
+    if(node.classList?.contains('page-editor')){
+      const rect=sel.getRangeAt(0).getBoundingClientRect();
+      const ft=document.getElementById('floattb');
+      const x=Math.max(10,Math.min(window.innerWidth-180,rect.left+rect.width/2-75));
+      ft.style.top=(window.scrollY+rect.top-46)+'px';
+      ft.style.left=x+'px';
+      ftb(true); return;
+    }
+    node=node.parentNode;
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+//  SAVE / LOAD
+// ─────────────────────────────────────────────────────────
+function autoSave(){
+  try{
+    document.querySelectorAll('.page-editor').forEach((ed,j)=>{if(pages[j])pages[j].html=ed.innerHTML;});
+    const data={pages,curIdx,title:document.getElementById('doctitle').textContent};
+    localStorage.setItem('ss_book',JSON.stringify(data));
+    document.getElementById('savestat').textContent='💾 Saved '+new Date().toLocaleTimeString('hi-IN');
+  }catch(e){}
+}
+function loadSave(){
+  try{
+    const raw=localStorage.getItem('ss_book');
+    if(!raw) return;
+    const data=JSON.parse(raw);
+    if(data.pages?.length){
+      pages=data.pages; curIdx=data.curIdx||0;
+      document.getElementById('doctitle').textContent=data.title||'Untitled Book';
+      renderAll();
+    }
+  }catch(e){}
+}
+function schedSave(){ clearTimeout(autoSaveTimer); autoSaveTimer=setTimeout(autoSave,2500); }
+function schedWC(){ clearTimeout(wcTimer); wcTimer=setTimeout(updateStats,400); }
+
+// ─────────────────────────────────────────────────────────
+//  STATS
+// ─────────────────────────────────────────────────────────
+function updateStats(){
+  const txt=Array.from(document.querySelectorAll('.page-editor')).map(e=>e.innerText).join(' ').trim();
+  document.getElementById('wc').textContent=(txt?txt.split(/\s+/).filter(w=>w).length:0).toLocaleString();
+  document.getElementById('pgcount').textContent=pages.length;
+}
+
+// ─────────────────────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ─────────────────────────────────────────────────────────
+//  PRINT CSS
+// ─────────────────────────────────────────────────────────
+const ps=document.createElement('style');
+ps.textContent=`@media print{#titlebar,#ribbon,#toolpanel,#statusbar,#pagepanel,#fmtpanel,#floattb,#toast,#scanoverlay,.modal-bg,.page-del-btn,.page-lbl{display:none!important;}body,html,#appbody,#canvas{background:#fff!important;overflow:visible!important;display:block!important;height:auto!important;}#canvas{padding:0!important;zoom:1!important;}.doc-page{box-shadow:none!important;width:100%!important;page-break-after:always!important;border:none!important;}.page-wrap{max-width:100%!important;}}`;
+document.head.appendChild(ps);
+
+console.log('%c📖 S&S Book v3 ready!','color:#c8860a;font-weight:bold;font-size:14px');
+console.log('Shortcuts: Ctrl+S save, Ctrl+E export, Ctrl+P print, Ctrl+± zoom');
+</script>
+</body>
+</html>
